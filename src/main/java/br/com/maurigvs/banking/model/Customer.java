@@ -1,14 +1,36 @@
 package br.com.maurigvs.banking.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.springframework.data.annotation.CreatedDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+
+@Entity
 public class Customer {
     
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @Column(unique = true)
     private String taxId;
+    
     private String name;
+    
     private String surname;
+    
     private LocalDate since;
+
+    @OneToMany(mappedBy = "customer")
+    private final List<Account> accounts = new ArrayList<>();
 
     public Customer(String taxId, String name, String surname, LocalDate since) {
         this.taxId = taxId;
@@ -31,5 +53,8 @@ public class Customer {
     }
     public LocalDate getSince() {
         return since;
+    }
+    public List<Account> getAccounts() {
+        return accounts;
     }
 }
