@@ -17,7 +17,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private UUID key;
+    private UUID keyCode;
     
     private LocalDate openedAt;
     
@@ -25,8 +25,11 @@ public class Account {
     @JoinColumn(name = "customer_id")
     private Customer customer;
     
-    public Account(UUID key, LocalDate openedAt, Customer customer) {
-        this.key = key;
+    protected Account() {
+    }
+
+    public Account(UUID keyCode, LocalDate openedAt, Customer customer) {
+        this.keyCode = keyCode;
         this.openedAt = openedAt;
         this.customer = customer;
     }
@@ -34,13 +37,16 @@ public class Account {
     public Long getId() {
         return id;
     }
-    public UUID getKey() {
-        return key;
+
+    public UUID getKeyCode() {
+        return keyCode;
     }
+
     public LocalDate getOpenedAt() {
         return openedAt;
     }
+
     public Customer getCustomer() {
         return customer;
-    }    
+    }
 }

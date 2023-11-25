@@ -27,7 +27,7 @@ public class AccountController {
             request.getName(), 
             request.getSurname()
         );
-        PostResponse response = new PostResponse(account.getKey().toString());
+        PostResponse response = new PostResponse(account.getKeyCode().toString());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -46,6 +46,6 @@ public class AccountController {
     @Getter
     static class PostResponse {
 
-        private String key;
+        private String keyCode;
     }
 }

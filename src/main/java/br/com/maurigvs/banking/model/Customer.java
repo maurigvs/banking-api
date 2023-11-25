@@ -4,9 +4,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.annotation.CreatedDate;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,7 +17,6 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    @Column(unique = true)
     private String taxId;
     
     private String name;
@@ -32,6 +28,9 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     private final List<Account> accounts = new ArrayList<>();
 
+    protected Customer() {
+    }
+
     public Customer(String taxId, String name, String surname, LocalDate since) {
         this.taxId = taxId;
         this.name = name;
@@ -42,18 +41,23 @@ public class Customer {
     public Long getId() {
         return id;
     }
+
     public String getTaxId() {
         return taxId;
     }
+
     public String getName() {
         return name;
     }
+
     public String getSurname() {
         return surname;
     }
+
     public LocalDate getSince() {
         return since;
     }
+
     public List<Account> getAccounts() {
         return accounts;
     }

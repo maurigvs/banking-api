@@ -4,23 +4,26 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.maurigvs.banking.model.Account;
 import br.com.maurigvs.banking.model.AccountRepository;
 import br.com.maurigvs.banking.model.Customer;
+import br.com.maurigvs.banking.model.CustomerRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class AccountService {
 
+    private final CustomerRepository customerRepository;
     private final AccountRepository accountRepository;
 
     @Transactional
     public Account openAccount(String taxId, String name, String surname){
-        Account account = new Account(UUID.randomUUID(), LocalDate.now(), 
-                            new Customer(taxId, name, surname, LocalDate.now()));
+        Customer customer = new Customer(taxId, name, surname, LocalDate.now());
+        Account account = new Account(UUID.randomUUID(), LocalDate.now(), customer);
+        customerRepository.save(customer);
         return accountRepository.save(account);
     }
 }
