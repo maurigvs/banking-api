@@ -1,6 +1,7 @@
 package br.com.maurigvs.banking.service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -25,5 +26,9 @@ public class AccountService {
         Account account = new Account(UUID.randomUUID(), LocalDate.now(), customer);
         customerRepository.save(customer);
         return accountRepository.save(account);
+    }
+
+    public List<Account> listAccounts() {
+        return accountRepository.findAll();
     }
 }

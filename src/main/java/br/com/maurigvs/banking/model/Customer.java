@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +15,7 @@ import jakarta.persistence.OneToMany;
 @Entity
 public class Customer {
     
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -25,6 +28,7 @@ public class Customer {
     
     private LocalDate since;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "customer")
     private final List<Account> accounts = new ArrayList<>();
 
