@@ -3,6 +3,7 @@ package br.com.maurigvs.banking.model;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -22,6 +23,7 @@ public class Account {
 
     private UUID keyCode;
     
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate openedAt;
     
     @ManyToOne

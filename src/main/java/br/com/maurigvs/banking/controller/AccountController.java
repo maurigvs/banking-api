@@ -43,7 +43,7 @@ public class AccountController {
 
     @Getter
     @Setter
-    static class PostRequest {
+    public static class PostRequest {
 
         private String taxId;
         private String name;
@@ -52,7 +52,7 @@ public class AccountController {
 
     @AllArgsConstructor
     @Getter
-    static class PostResponse {
+    public static class PostResponse {
 
         private String keyCode;
     }
