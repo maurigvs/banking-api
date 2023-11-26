@@ -1,33 +1,31 @@
 package br.com.maurigvs.banking.service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
-import br.com.maurigvs.banking.model.Account;
-import br.com.maurigvs.banking.model.Customer;
+import br.com.maurigvs.banking.model.entity.Account;
+import br.com.maurigvs.banking.model.entity.Customer;
 import br.com.maurigvs.banking.repository.AccountRepository;
-import br.com.maurigvs.banking.repository.CustomerRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class AccountService {
 
-    private final CustomerRepository customerRepository;
-    private final AccountRepository accountRepository;
+    private final AccountRepository repository;
 
-    @Transactional
-    public Account openAccount(String taxId, String name, String surname){
-        Customer customer = new Customer(null, taxId, name, surname, LocalDate.now());
-        Account account = new Account(null, UUID.randomUUID(), LocalDate.now(), customer);
-        customerRepository.save(customer);
-        return accountRepository.save(account);
+    protected Account create(Customer customer){
+        return repository.save(new Account(null, UUID.randomUUID(),0.00, customer));
+    }
+
+    protected void updateBalance(Long accountId, Double amount) {
+        Account account = repository.getReferenceById(accountId);
+        account.setBalance(Double.sum(account.getBalance(), amount));
+        repository.save(account);
     }
 
     public List<Account> listAccounts() {
-        return accountRepository.findAll();
+        return repository.findAll();
     }
 }

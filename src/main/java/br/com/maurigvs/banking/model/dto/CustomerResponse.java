@@ -1,17 +1,17 @@
-package br.com.maurigvs.banking.controller.dto;
+package br.com.maurigvs.banking.model.dto;
 
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import br.com.maurigvs.banking.model.Customer;
+import br.com.maurigvs.banking.model.entity.Customer;
 import lombok.Getter;
 
 @Getter
 public class CustomerResponse {
     
     private final String taxId;
-    
+
     private final String name;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

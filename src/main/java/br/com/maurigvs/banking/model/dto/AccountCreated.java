@@ -1,6 +1,6 @@
-package br.com.maurigvs.banking.controller.dto;
+package br.com.maurigvs.banking.model.dto;
 
-import br.com.maurigvs.banking.model.Account;
+import br.com.maurigvs.banking.model.entity.Account;
 import lombok.Getter;
 
 @Getter

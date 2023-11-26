@@ -1,14 +1,15 @@
-package br.com.maurigvs.banking.model;
+package br.com.maurigvs.banking.model.entity;
 
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,18 +19,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Account {
+public class Customer {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @Column(unique = true)
+    private String taxId;
+    
+    private String name;
+    private String surname;
 
-    private UUID keyCode;
-    
-    private LocalDate openedAt;
-    
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private final LocalDate since = LocalDate.now();
+
+    @OneToMany(mappedBy = "customer")
+    private final List<Account> accounts = new ArrayList<>();
     
 }
