@@ -21,8 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import br.com.maurigvs.banking.controller.AccountController.PostRequest;
-import br.com.maurigvs.banking.controller.AccountController.PostResponse;
+import br.com.maurigvs.banking.controller.dto.AccountCreated;
+import br.com.maurigvs.banking.controller.dto.AccountRequest;
+import br.com.maurigvs.banking.controller.dto.AccountResponse;
 import br.com.maurigvs.banking.exception.ErrorMessage;
 import br.com.maurigvs.banking.mock.Mocks;
 import br.com.maurigvs.banking.model.Account;
@@ -41,9 +42,10 @@ class AccountControllerTest {
     @Test
     void should_ReturnOK_when_ListAccounts() throws Exception{
         // given
-        List<Account> accounts = Mocks.getAccountsList();
-        String listAsJson = Mocks.parseToJson(accounts);
-        given(accountService.listAccounts()).willReturn(accounts);
+        List<Account> accountList = Mocks.accountList();
+        List<AccountResponse> accountResponse = Mocks.accountListResponse(accountList);
+        String listAsJson = Mocks.parseToJson(accountResponse);
+        given(accountService.listAccounts()).willReturn(accountList);
 
         // when
         mockMvc.perform(get("/account/list"))
@@ -59,10 +61,10 @@ class AccountControllerTest {
     @Test
     void should_ReturnCreated_when_OpenAccount() throws Exception{
         // given
-        Account account = Mocks.mockAccount();
-        PostRequest request = Mocks.mockPostAccountRequest(account);
+        Account account = Mocks.account();
+        AccountRequest request = Mocks.accountRequest(account);
         String requestAsJson = Mocks.parseToJson(request);
-        PostResponse response = Mocks.mockPostAccountResponse(account);
+        AccountCreated response = Mocks.accountCreated(account);
         String responseAsJson = Mocks.parseToJson(response);
         given(accountService.openAccount(anyString(), anyString(), anyString())).willReturn(account);
 
