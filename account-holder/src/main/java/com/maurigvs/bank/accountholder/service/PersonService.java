@@ -22,10 +22,10 @@ public class PersonService extends AccountHolderService {
 
         personRepository.save(new Person(null, LocalDate.now(), true,
                 request.name(), request.surname(), localDateFrom(request.birthDate()),
-                request.taxIdNumber(), request.email(), request.phoneNumber()));
+                request.cpf(), request.email(), request.phoneNumber()));
     }
 
     private boolean personAlreadyExists(CreatePersonRequest request) {
-        return personRepository.existsByTaxIdNumber(request.taxIdNumber());
+        return personRepository.existsByCpf(request.cpf());
     }
 }

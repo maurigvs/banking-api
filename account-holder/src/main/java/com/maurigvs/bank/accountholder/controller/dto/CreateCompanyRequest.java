@@ -4,7 +4,7 @@ public record CreateCompanyRequest(
         String legalName,
         String businessName,
         String openingDate,
-        String taxIdNumber,
+        String cnpj,
         String contactEmail,
         String contactPhoneNumber
 ) {

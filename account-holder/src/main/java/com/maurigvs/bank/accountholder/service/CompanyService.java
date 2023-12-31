@@ -22,10 +22,10 @@ public class CompanyService extends AccountHolderService {
 
         companyRepository.save(new Company(null, LocalDate.now(), true,
                 request.legalName(), request.businessName(), localDateFrom(request.openingDate()),
-                request.taxIdNumber(), request.contactEmail(), request.contactPhoneNumber()));
+                request.cnpj(), request.contactEmail(), request.contactPhoneNumber()));
     }
 
     private boolean companyAlreadyExists(CreateCompanyRequest request) {
-        return companyRepository.existsByTaxIdNumber(request.taxIdNumber());
+        return companyRepository.existsByCnpj(request.cnpj());
     }
 }

@@ -4,7 +4,7 @@ public record CreatePersonRequest(
         String name,
         String surname,
         String birthDate,
-        String taxIdNumber,
+        String cpf,
         String email,
         String phoneNumber
 ) {

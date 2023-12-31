@@ -22,18 +22,18 @@ public class Person extends AccountHolder {
     private LocalDate birthDate;
 
     @Column(unique = true)
-    private String taxIdNumber;
+    private String cpf;
 
     private String email;
 
     private String phoneNumber;
 
-    public Person(Long id, LocalDate customerSince, boolean enabled, String name, String surname, LocalDate birthDate, String taxIdNumber, String email, String phoneNumber) {
+    public Person(Long id, LocalDate customerSince, boolean enabled, String name, String surname, LocalDate birthDate, String cpf, String email, String phoneNumber) {
         super(id, customerSince, enabled);
         this.name = name;
         this.surname = surname;
         this.birthDate = birthDate;
-        this.taxIdNumber = taxIdNumber;
+        this.cpf = cpf;
         this.email = email;
         this.phoneNumber = phoneNumber;
     }

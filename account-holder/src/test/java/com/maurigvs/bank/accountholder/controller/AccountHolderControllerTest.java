@@ -75,7 +75,6 @@ class AccountHolderControllerTest {
     void should_return_bad_request_when_exception_is_thrown() throws Exception {
 
         var response = new ErrorResponse("Bad Request","The account holder already exists");
-
         willThrow(new BusinessRuleException("The account holder already exists"))
                 .given(personService).createPerson(any(CreatePersonRequest.class));
 

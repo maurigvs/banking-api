@@ -40,7 +40,7 @@ class CompanyServiceTest {
 
     @BeforeEach
     void setUp() {
-        given(companyRepository.existsByTaxIdNumber(anyString())).willReturn(false);
+        given(companyRepository.existsByCnpj(anyString())).willReturn(false);
     }
 
     @Test
@@ -52,7 +52,7 @@ class CompanyServiceTest {
 
         companyService.createCompany(request);
 
-        then(companyRepository).should(times(1)).existsByTaxIdNumber(request.taxIdNumber());
+        then(companyRepository).should(times(1)).existsByCnpj(request.cnpj());
         then(companyRepository).should(times(1)).save(companyCaptor.capture());
         then(companyRepository).shouldHaveNoMoreInteractions();
 
@@ -63,7 +63,7 @@ class CompanyServiceTest {
         assertThat(company.getLegalName()).isEqualTo(request.legalName());
         assertThat(company.getBusinessName()).isEqualTo(request.businessName());
         assertThat(company.getOpeningDate()).isEqualTo(LocalDate.of(2013,5,3));
-        assertThat(company.getTaxIdNumber()).isEqualTo(request.taxIdNumber());
+        assertThat(company.getCnpj()).isEqualTo(request.cnpj());
         assertThat(company.getEmail()).isEqualTo(request.contactEmail());
         assertThat(company.getPhoneNumber()).isEqualTo(request.contactPhoneNumber());
     }
@@ -71,13 +71,13 @@ class CompanyServiceTest {
     @Test
     void should_throw_exception_if_company_already_exists() {
 
-        given(companyRepository.existsByTaxIdNumber(anyString())).willReturn(true);
+        given(companyRepository.existsByCnpj(anyString())).willReturn(true);
 
         assertThatExceptionOfType(BusinessRuleException.class)
                 .isThrownBy(() -> companyService.createCompany(Mocks.createCompanyRequest()))
                 .withMessage("The account holder already exists");
 
-        then(companyRepository).should(times(1)).existsByTaxIdNumber("86580512180");
+        then(companyRepository).should(times(1)).existsByCnpj("86580512180");
         then(companyRepository).shouldHaveNoMoreInteractions();
     }
 

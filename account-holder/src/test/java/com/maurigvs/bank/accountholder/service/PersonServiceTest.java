@@ -40,7 +40,7 @@ class PersonServiceTest {
 
     @BeforeEach
     void setUp() {
-        given(personRepository.existsByTaxIdNumber(anyString())).willReturn(false);
+        given(personRepository.existsByCpf(anyString())).willReturn(false);
     }
 
     @Test
@@ -51,7 +51,7 @@ class PersonServiceTest {
 
         personService.createPerson(request);
 
-        then(personRepository).should(times(1)).existsByTaxIdNumber(request.taxIdNumber());
+        then(personRepository).should(times(1)).existsByCpf(request.cpf());
         then(personRepository).should(times(1)).save(personCaptor.capture());
         then(personRepository).shouldHaveNoMoreInteractions();
 
@@ -62,7 +62,7 @@ class PersonServiceTest {
         assertThat(person.getName()).isEqualTo(request.name());
         assertThat(person.getSurname()).isEqualTo(request.surname());
         assertThat(person.getBirthDate()).isEqualTo(LocalDate.of(1988,7,28));
-        assertThat(person.getTaxIdNumber()).isEqualTo(request.taxIdNumber());
+        assertThat(person.getCpf()).isEqualTo(request.cpf());
         assertThat(person.getEmail()).isEqualTo(request.email());
         assertThat(person.getPhoneNumber()).isEqualTo(request.phoneNumber());
     }
@@ -71,25 +71,21 @@ class PersonServiceTest {
     void should_throw_exception_if_person_already_exists() {
 
         var request = Mocks.createPersonRequest();
-        given(personRepository.existsByTaxIdNumber(anyString())).willReturn(true);
+        given(personRepository.existsByCpf(anyString())).willReturn(true);
 
         assertThatExceptionOfType(BusinessRuleException.class)
                 .isThrownBy(() -> personService.createPerson(request))
                 .withMessage("The account holder already exists");
 
-        then(personRepository).should(times(1)).existsByTaxIdNumber(request.taxIdNumber());
+        then(personRepository).should(times(1)).existsByCpf(request.cpf());
         then(personRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void should_throw_exception_if_birth_date_is_invalid_when_create_person() {
 
-        var request = new CreatePersonRequest("John",
-                "Wayne",
-                "1988-07-28",
-                "86580512180",
-                "john@wayne.com",
-                "+5511984833929");
+        var request = new CreatePersonRequest("John", "Wayne",
+                "1988-07-28", "86580512180", "john@wayne.com", "+5511984833929");
 
         assertThatExceptionOfType(BusinessRuleException.class)
                 .isThrownBy(() -> personService.createPerson(request))

@@ -22,18 +22,18 @@ public class Company extends AccountHolder {
     private LocalDate openingDate;
 
     @Column(unique = true)
-    private String taxIdNumber;
+    private String cnpj;
 
     private String email;
 
     private String phoneNumber;
 
-    public Company(Long id, LocalDate customerSince, boolean enabled, String legalName, String businessName, LocalDate openingDate, String taxIdNumber, String email, String phoneNumber) {
+    public Company(Long id, LocalDate customerSince, boolean enabled, String legalName, String businessName, LocalDate openingDate, String cnpj, String email, String phoneNumber) {
         super(id, customerSince, enabled);
         this.legalName = legalName;
         this.businessName = businessName;
         this.openingDate = openingDate;
-        this.taxIdNumber = taxIdNumber;
+        this.cnpj = cnpj;
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
