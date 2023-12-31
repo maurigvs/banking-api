@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class LocalExceptionHandler {
 
-    @ExceptionHandler(InvalidInputException.class)
+    @ExceptionHandler(BusinessRuleException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponse handleInvalidInputException(InvalidInputException ex){
+    public ErrorResponse handleInvalidInputException(BusinessRuleException ex){
         return new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage());
     }
 }

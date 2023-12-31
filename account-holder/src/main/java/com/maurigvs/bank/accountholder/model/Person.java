@@ -1,5 +1,6 @@
 package com.maurigvs.bank.accountholder.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.AccessLevel;
@@ -15,10 +16,16 @@ import java.time.LocalDate;
 public class Person extends AccountHolder {
 
     private String name;
+
     private String surname;
+
     private LocalDate birthDate;
+
+    @Column(unique = true)
     private String taxIdNumber;
+
     private String email;
+
     private String phoneNumber;
 
     public Person(Long id, LocalDate customerSince, boolean enabled, String name, String surname, LocalDate birthDate, String taxIdNumber, String email, String phoneNumber) {

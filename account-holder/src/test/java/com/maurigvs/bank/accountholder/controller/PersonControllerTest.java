@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maurigvs.bank.accountholder.controller.dto.CreatePersonRequest;
 import com.maurigvs.bank.accountholder.controller.dto.ErrorResponse;
-import com.maurigvs.bank.accountholder.exception.InvalidInputException;
-import com.maurigvs.bank.accountholder.service.AccountHolderService;
+import com.maurigvs.bank.accountholder.exception.BusinessRuleException;
+import com.maurigvs.bank.accountholder.service.PersonService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class PersonControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    AccountHolderService service;
+    PersonService service;
 
     @Test
     void should_return_created_when_post_person_request() throws Exception {
@@ -60,7 +60,7 @@ class PersonControllerTest {
         var response = new ErrorResponse("Bad Request",
                 "The date must have the format: dd/MM/yyyy");
 
-        willThrow(new InvalidInputException("The date must have the format: dd/MM/yyyy"))
+        willThrow(new BusinessRuleException("The date must have the format: dd/MM/yyyy"))
                 .given(service).createPerson(any(CreatePersonRequest.class));
 
         mockMvc.perform(post("/person")
@@ -73,7 +73,6 @@ class PersonControllerTest {
         then(service).should(times(1)).createPerson(eq(request));
         then(service).shouldHaveNoMoreInteractions();
     }
-
 
     private String jsonStringFrom(Object object) throws Exception {
         final var om = new ObjectMapper();

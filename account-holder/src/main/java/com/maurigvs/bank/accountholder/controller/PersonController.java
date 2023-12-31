@@ -1,7 +1,7 @@
 package com.maurigvs.bank.accountholder.controller;
 
 import com.maurigvs.bank.accountholder.controller.dto.CreatePersonRequest;
-import com.maurigvs.bank.accountholder.service.AccountHolderService;
+import com.maurigvs.bank.accountholder.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PersonController {
 
-    private final AccountHolderService service;
+    private final PersonService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
