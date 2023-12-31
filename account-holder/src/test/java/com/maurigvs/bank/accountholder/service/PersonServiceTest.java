@@ -1,6 +1,6 @@
 package com.maurigvs.bank.accountholder.service;
 
-import com.maurigvs.bank.accountholder.Mocks;
+import com.maurigvs.bank.accountholder.mock.Mocks;
 import com.maurigvs.bank.accountholder.controller.dto.CreatePersonRequest;
 import com.maurigvs.bank.accountholder.exception.BusinessRuleException;
 import com.maurigvs.bank.accountholder.model.Person;
@@ -47,8 +47,14 @@ class PersonServiceTest {
     @Test
     void should_create_person_successfully() throws Exception {
 
-        var request = Mocks.createPersonRequest();
-        given(personRepository.save(any(Person.class))).willReturn(Mocks.person());
+        var request = Mocks.ofCreatePersonRequest();
+
+        var personCreated = new Person(1L, LocalDate.now(), true,
+                "John", "Wayne",
+                LocalDate.of(1988,8,28), "72097237000143",
+                "john@wayne.com", "+5511984833929");
+
+        given(personRepository.save(any(Person.class))).willReturn(personCreated);
 
         personService.createPerson(request);
 
@@ -87,7 +93,7 @@ class PersonServiceTest {
     @Test
     void should_throw_exception_if_person_already_exists() {
 
-        var request = Mocks.createPersonRequest();
+        var request = Mocks.ofCreatePersonRequest();
         given(personRepository.existsByCpf(anyString())).willReturn(true);
 
         assertThatExceptionOfType(BusinessRuleException.class)

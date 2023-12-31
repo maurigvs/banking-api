@@ -1,6 +1,6 @@
 package com.maurigvs.bank.accountholder.service;
 
-import com.maurigvs.bank.accountholder.Mocks;
+import com.maurigvs.bank.accountholder.mock.Mocks;
 import com.maurigvs.bank.accountholder.controller.dto.CreateCompanyRequest;
 import com.maurigvs.bank.accountholder.exception.BusinessRuleException;
 import com.maurigvs.bank.accountholder.model.Company;
@@ -47,8 +47,13 @@ class CompanyServiceTest {
     @Test
     void should_create_company_successfully() throws Exception {
 
-        var request = Mocks.createCompanyRequest();
-        var companyCreated = Mocks.company();
+        var request = Mocks.ofCreateCompanyRequest();
+
+        var companyCreated = new Company(1L, LocalDate.now(), true,
+                "Company Services", "Company Services Ltd.",
+                LocalDate.of(2013,5,3), "72097237000143",
+                "john@wayne.com", "+5511984833929");
+
         given(companyRepository.save(any(Company.class))).willReturn(companyCreated);
 
         companyService.createCompany(request);
@@ -89,7 +94,7 @@ class CompanyServiceTest {
     @Test
     void should_throw_exception_if_company_already_exists() {
 
-        var request = Mocks.createCompanyRequest();
+        var request = Mocks.ofCreateCompanyRequest();
         given(companyRepository.existsByCnpj(anyString())).willReturn(true);
 
         assertThatExceptionOfType(BusinessRuleException.class)
