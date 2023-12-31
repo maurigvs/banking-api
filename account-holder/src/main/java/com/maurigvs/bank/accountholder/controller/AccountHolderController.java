@@ -1,6 +1,8 @@
 package com.maurigvs.bank.accountholder.controller;
 
+import com.maurigvs.bank.accountholder.controller.dto.CreateCompanyRequest;
 import com.maurigvs.bank.accountholder.controller.dto.CreatePersonRequest;
+import com.maurigvs.bank.accountholder.service.CompanyService;
 import com.maurigvs.bank.accountholder.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,15 +13,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/account-holder")
 @RequiredArgsConstructor
-public class PersonController {
+public class AccountHolderController {
 
-    private final PersonService service;
+    private final CompanyService companyService;
+    private final PersonService personService;
 
-    @PostMapping
+    @PostMapping("/company")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void postCompany(@RequestBody CreateCompanyRequest request) throws Exception {
+        companyService.createCompany(request);
+    }
+
+    @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
     public void postPerson(@RequestBody CreatePersonRequest request) throws Exception {
-        service.createPerson(request);
+        personService.createPerson(request);
     }
 }
