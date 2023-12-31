@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -68,6 +69,22 @@ class PersonServiceTest {
     }
 
     @Test
+    void should_throw_exception_if_person_underage() {
+
+        var birthDate = LocalDate.now().minusYears(18).plusDays(1)
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        var request = new CreatePersonRequest("John", "Wayne", birthDate,
+                "86580512180", "john@wayne.com", "+5511984833929");
+
+        assertThatExceptionOfType(BusinessRuleException.class)
+                .isThrownBy(() -> personService.createPerson(request))
+                .withMessage("The account holder must have 18 years of age completed.");
+
+        then(personRepository).shouldHaveNoInteractions();
+    }
+
+    @Test
     void should_throw_exception_if_person_already_exists() {
 
         var request = Mocks.createPersonRequest();
@@ -84,11 +101,13 @@ class PersonServiceTest {
     @Test
     void should_throw_exception_if_birth_date_is_invalid_when_create_person() {
 
-        var request = new CreatePersonRequest("John", "Wayne",
-                "1988-07-28", "86580512180", "john@wayne.com", "+5511984833929");
+        var request = new CreatePersonRequest("John", "Wayne", "1988-07-28",
+                "86580512180", "john@wayne.com", "+5511984833929");
 
         assertThatExceptionOfType(BusinessRuleException.class)
                 .isThrownBy(() -> personService.createPerson(request))
                 .withMessage("The date must have the format: dd/MM/yyyy");
+
+        then(personRepository).shouldHaveNoInteractions();
     }
 }
