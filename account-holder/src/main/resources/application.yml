@@ -1,10 +1,10 @@
 server:
   servlet:
-    context-path: /customers
+    context-path: /bank
   port: 8080
 spring:
   datasource:
-    url: jdbc:h2:mem:customers-db
+    url: jdbc:h2:mem:account-holders-db
     username: app
     password: 'app'
   h2:
