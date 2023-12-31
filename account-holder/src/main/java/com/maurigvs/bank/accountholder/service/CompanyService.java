@@ -17,12 +17,21 @@ public class CompanyService extends AccountHolderService {
 
     public void createCompany(CreateCompanyRequest request) throws Exception {
 
+        var openingDate = localDateFrom(request.openingDate());
+
+        if(companyNotOldEnough(openingDate))
+            throw new BusinessRuleException("The company needs to be older than 6 months");
+
         if(companyAlreadyExists(request))
             throw new BusinessRuleException("The account holder already exists");
 
         companyRepository.save(new Company(null, LocalDate.now(), true,
                 request.legalName(), request.businessName(), localDateFrom(request.openingDate()),
                 request.cnpj(), request.contactEmail(), request.contactPhoneNumber()));
+    }
+
+    private boolean companyNotOldEnough(LocalDate openingDate) {
+        return openingDate.isAfter(LocalDate.now().minusMonths(6));
     }
 
     private boolean companyAlreadyExists(CreateCompanyRequest request) {

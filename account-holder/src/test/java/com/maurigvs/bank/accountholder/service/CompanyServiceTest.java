@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -69,15 +70,33 @@ class CompanyServiceTest {
     }
 
     @Test
+    void should_throw_exception_if_company_newer_than_6_months() {
+
+        var openingDate = LocalDate.now().minusMonths(6).plusDays(1)
+                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        var request = new CreateCompanyRequest("Company Services",
+                "Company Services Ltd.", openingDate, "86580512180",
+                "john@wayne.com", "+5511984833929");
+
+        assertThatExceptionOfType(BusinessRuleException.class)
+                .isThrownBy(() -> companyService.createCompany(request))
+                .withMessage("The company needs to be older than 6 months");
+
+        then(companyRepository).shouldHaveNoInteractions();
+    }
+
+    @Test
     void should_throw_exception_if_company_already_exists() {
 
+        var request = Mocks.createCompanyRequest();
         given(companyRepository.existsByCnpj(anyString())).willReturn(true);
 
         assertThatExceptionOfType(BusinessRuleException.class)
-                .isThrownBy(() -> companyService.createCompany(Mocks.createCompanyRequest()))
+                .isThrownBy(() -> companyService.createCompany(request))
                 .withMessage("The account holder already exists");
 
-        then(companyRepository).should(times(1)).existsByCnpj("86580512180");
+        then(companyRepository).should(times(1)).existsByCnpj(request.cnpj());
         then(companyRepository).shouldHaveNoMoreInteractions();
     }
 
@@ -85,14 +104,13 @@ class CompanyServiceTest {
     void should_throw_exception_if_birth_date_is_invalid_when_create_company() {
 
         var request = new CreateCompanyRequest("Company Services",
-                "Company Services Ltd.",
-                "2013-05-03",
-                "86580512180",
-                "john@wayne.com",
-                "+5511984833929");
+                "Company Services Ltd.", "2013-05-03", "86580512180",
+                "john@wayne.com", "+5511984833929");
 
         assertThatExceptionOfType(BusinessRuleException.class)
                 .isThrownBy(() -> companyService.createCompany(request))
                 .withMessage("The date must have the format: dd/MM/yyyy");
+
+        then(companyRepository).shouldHaveNoInteractions();
     }
 }
