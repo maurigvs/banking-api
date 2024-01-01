@@ -31,6 +31,9 @@ class AccountServiceTest {
     @MockBean
     AccountRepository accountRepository;
 
+    @MockBean
+    TransactionService transactionService;
+
     @Captor
     ArgumentCaptor<Account> accountArgumentCaptor;
 
@@ -45,6 +48,10 @@ class AccountServiceTest {
         then(accountRepository).should(times(1)).save(accountArgumentCaptor.capture());
         then(accountRepository).shouldHaveNoMoreInteractions();
         var account = accountArgumentCaptor.getValue();
+
+        then(transactionService).should(times(1)).credit(account, "Initial deposit", request.initialDeposit());
+        then(transactionService).shouldHaveNoMoreInteractions();
+
         assertNull(account.getId());
         assertEquals(request.accountHolderId(), account.getAccountHolderId());
         assertEquals(request.pinCode(), account.getPinCode());

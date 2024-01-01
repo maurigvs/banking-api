@@ -4,6 +4,7 @@ import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
 import com.maurigvs.bank.checkingaccount.model.entity.Account;
 import com.maurigvs.bank.checkingaccount.repository.AccountRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,13 +13,17 @@ import org.springframework.stereotype.Service;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final TransactionService transactionService;
 
+    @Transactional
     public void openAccount(OpenAccountRequest request) throws BusinessRuleException {
 
         if(Double.valueOf(0.0).equals(request.initialDeposit()))
             throw new BusinessRuleException("A initial deposit is required to open account");
 
-        accountRepository.save(new Account(null, request.accountHolderId(),
-                request.pinCode(), request.initialDeposit()));
+        final var account = new Account(null, request.accountHolderId(), request.pinCode(), request.initialDeposit());
+
+        accountRepository.save(account);
+        transactionService.credit(account, "Initial deposit", request.initialDeposit());
     }
 }

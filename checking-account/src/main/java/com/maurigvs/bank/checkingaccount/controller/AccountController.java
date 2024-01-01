@@ -3,6 +3,7 @@ package com.maurigvs.bank.checkingaccount.controller;
 import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
 import com.maurigvs.bank.checkingaccount.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void postAccount(@RequestBody OpenAccountRequest request) throws BusinessRuleException {
+    public void postAccount(@RequestBody @Valid OpenAccountRequest request) throws BusinessRuleException {
         accountService.openAccount(request);
     }
 }
