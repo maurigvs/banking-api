@@ -20,4 +20,5 @@ public class Account {
     private Long id;
     private Long accountHolderId;
     private Integer pinCode;
+    private Double balance;
 }

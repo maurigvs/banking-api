@@ -1,5 +1,6 @@
 package com.maurigvs.bank.checkingaccount.controller;
 
+import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
 import com.maurigvs.bank.checkingaccount.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void postAccount(@RequestBody OpenAccountRequest request){
+    public void postAccount(@RequestBody OpenAccountRequest request) throws BusinessRuleException {
         accountService.openAccount(request);
     }
 }
