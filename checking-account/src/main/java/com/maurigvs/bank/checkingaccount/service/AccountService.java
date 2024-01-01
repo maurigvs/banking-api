@@ -26,4 +26,9 @@ public class AccountService {
         accountRepository.save(account);
         transactionService.credit(account, "Initial deposit", request.initialDeposit());
     }
+
+    public Account authenticate(long accoundId, int pinCode) throws BusinessRuleException {
+        return accountRepository.findById(accoundId)
+                .orElseThrow(() -> new BusinessRuleException("Account not found"));
+    }
 }

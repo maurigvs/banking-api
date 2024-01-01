@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/checking-account/consumer")
+@RequestMapping("/account")
 @RequiredArgsConstructor
 public class AccountController {
 
     private final AccountService accountService;
 
-    @PostMapping
+    @PostMapping("/open")
     @ResponseStatus(HttpStatus.CREATED)
     public void postAccount(@RequestBody @Valid OpenAccountRequest request) throws BusinessRuleException {
         accountService.openAccount(request);

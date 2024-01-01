@@ -15,4 +15,8 @@ public class TransactionService {
     public void credit(Account account, String description, Double amount) {
         transactionRepository.save(new Transaction(null, description, amount, account));
     }
+
+    public void deposit(Account account, Double amount) {
+        credit(account, "Cash deposit", amount);
+    }
 }

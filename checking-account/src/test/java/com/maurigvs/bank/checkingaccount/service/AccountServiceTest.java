@@ -13,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -56,6 +60,7 @@ class AccountServiceTest {
         assertEquals(request.accountHolderId(), account.getAccountHolderId());
         assertEquals(request.pinCode(), account.getPinCode());
         assertEquals(request.initialDeposit(), account.getBalance());
+        assertTrue(account.getTransactions().isEmpty());
     }
 
     @Test
@@ -68,5 +73,18 @@ class AccountServiceTest {
                 .withMessage("A initial deposit is required to open account");
 
         then(accountRepository).shouldHaveNoInteractions();
+    }
+
+    @Test
+    void should_throw_exception_when_authentication_fails(){
+
+        given(accountRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        assertThatExceptionOfType(BusinessRuleException.class)
+                .isThrownBy(() -> accountService.authenticate(123456L, 234567))
+                .withMessage("Account not found");
+
+        then(accountRepository).should(times(1)).findById(123456L);
+        then(accountRepository).shouldHaveNoMoreInteractions();
     }
 }

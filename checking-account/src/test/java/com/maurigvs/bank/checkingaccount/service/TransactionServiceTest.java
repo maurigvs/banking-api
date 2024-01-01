@@ -33,15 +33,27 @@ class TransactionServiceTest {
     void should_make_credit_transaction_into_account() {
 
         var account = new Account(23456L, 345678L, 123456, 0.00);
+        transactionService.credit(account, "Initial deposit", 150.00);
+        assertTransaction(account, "Initial deposit", 150.00);
+    }
 
-        transactionService.credit(account, "Initial deposit", 100.00);
+    @Test
+    void should_make_credit_when_make_deposit() {
+
+        var account = new Account(23456L, 345678L, 123456, 0.00);
+        transactionService.deposit(account, 2300.00);
+        assertTransaction(account, "Cash deposit", 2300.00);
+    }
+
+    void assertTransaction(Account account, String description, Double amount){
 
         then(transactionRepository).should(times(1)).save(transactionArgumentCaptor.capture());
         then(transactionRepository).shouldHaveNoMoreInteractions();
+
         var transaction = transactionArgumentCaptor.getValue();
         assertNull(transaction.getId());
-        assertEquals("Initial deposit", transaction.getDescription());
-        assertEquals(100.00, transaction.getAmount());
+        assertEquals(description, transaction.getDescription());
+        assertEquals(amount, transaction.getAmount());
         assertEquals(account, transaction.getAccount());
     }
 }

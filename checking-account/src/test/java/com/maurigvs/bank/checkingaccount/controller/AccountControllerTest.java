@@ -46,7 +46,7 @@ class AccountControllerTest {
         var request = new OpenAccountRequest(123L, 100.00, 123456);
         willDoNothing().given(accountService).openAccount(any(OpenAccountRequest.class));
 
-        mockMvc.perform(post("/checking-account/consumer")
+        mockMvc.perform(post("/account/open")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ofJsonFrom(request)))
                 .andExpect(status().isCreated());
@@ -64,7 +64,7 @@ class AccountControllerTest {
         willThrow(new BusinessRuleException("A initial deposit is required to open account"))
                 .given(accountService).openAccount(any(OpenAccountRequest.class));
 
-        mockMvc.perform(post("/checking-account/consumer")
+        mockMvc.perform(post("/account/open")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ofJsonFrom(request)))
                 .andExpect(status().isBadRequest())
@@ -101,7 +101,7 @@ class AccountControllerTest {
 
         var response = new ErrorResponse("Bad Request", messages);
 
-        mockMvc.perform(post("/checking-account/consumer")
+        mockMvc.perform(post("/account/open")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ofJsonFrom(request)))
                 .andExpect(status().isBadRequest())
