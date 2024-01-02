@@ -1,5 +1,6 @@
 package com.maurigvs.bank.checkingaccount.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.maurigvs.bank.checkingaccount.exception.AuthenticationException;
@@ -157,8 +158,27 @@ class BankControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("/account/withdraw")
+    class WithdrawTests {
 
-    private static String ofJsonFrom(Object object) throws Exception {
+        @Test
+        void should_return_ok_when_post_withdraw() throws Exception {
+
+            var accoundId = 234567L;
+            var pinCode = 123456;
+            var amount = 70.00;
+            willDoNothing().given(service).makeDeposit(anyLong(), anyInt(), anyDouble());
+
+            mockMvc.perform(post("/account/234567/123456/withdraw/70.00"))
+                    .andExpect(status().isAccepted());
+
+            then(service).should(times(1)).makeWithdraw(accoundId, pinCode, amount);
+            then(service).shouldHaveNoMoreInteractions();
+        }
+    }
+
+    private static String ofJsonFrom(Object object) throws JsonProcessingException {
         final var om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
         return om.writeValueAsString(object);

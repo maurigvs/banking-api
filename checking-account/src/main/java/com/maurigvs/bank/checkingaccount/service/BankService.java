@@ -9,4 +9,6 @@ public interface BankService {
     void openAccount(OpenAccountRequest request) throws BusinessRuleException;
 
     void makeDeposit(Long accountId, Integer pinCode, Double amount) throws AuthenticationException, BusinessRuleException;
+
+    void makeWithdraw(long accoundId, int pinCode, double amount);
 }

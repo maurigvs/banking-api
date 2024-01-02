@@ -29,6 +29,11 @@ public class BankServiceImpl implements BankService {
         creditAccount(account, "Cash Deposit", amount);
     }
 
+    @Override
+    public void makeWithdraw(long accoundId, int pinCode, double amount) {
+
+    }
+
     private void creditAccount(Account account, String description, Double amount) throws BusinessRuleException {
         transactionService.credit(account, description, amount);
         accountService.updateBalance(account, amount);

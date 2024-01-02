@@ -1,6 +1,5 @@
 package com.maurigvs.bank.checkingaccount.controller;
 
-import com.maurigvs.bank.checkingaccount.exception.AuthenticationException;
 import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
 import com.maurigvs.bank.checkingaccount.service.BankService;
@@ -29,9 +28,17 @@ public class BankController {
 
     @PostMapping("/{accountId}/{pinCode}/deposit/{amount}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void postAccount(@PathVariable Long accountId,
+    public void postDeposit(@PathVariable Long accountId,
                             @PathVariable Integer pinCode,
                             @PathVariable Double amount) throws BusinessRuleException {
         bankService.makeDeposit(accountId, pinCode, amount);
+    }
+
+    @PostMapping("/{accountId}/{pinCode}/withdraw/{amount}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void postWithdraw(@PathVariable Long accountId,
+                            @PathVariable Integer pinCode,
+                            @PathVariable Double amount) {
+        bankService.makeWithdraw(accountId, pinCode, amount);
     }
 }
