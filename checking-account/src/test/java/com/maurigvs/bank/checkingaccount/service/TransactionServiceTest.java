@@ -1,5 +1,6 @@
 package com.maurigvs.bank.checkingaccount.service;
 
+import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.entity.Account;
 import com.maurigvs.bank.checkingaccount.model.entity.Transaction;
 import com.maurigvs.bank.checkingaccount.repository.TransactionRepository;
@@ -12,48 +13,56 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
-@SpringBootTest(classes = {TransactionService.class})
+@SpringBootTest(classes = {TransactionServiceImpl.class})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class TransactionServiceTest {
 
     @Autowired
-    TransactionService transactionService;
+    TransactionService service;
 
     @MockBean
-    TransactionRepository transactionRepository;
+    TransactionRepository repository;
 
     @Captor
-    ArgumentCaptor<Transaction> transactionArgumentCaptor;
+    ArgumentCaptor<Transaction> captor;
 
     @Test
-    void should_make_credit_transaction_into_account() {
+    void should_create_transaction_successfully() throws BusinessRuleException {
 
+        var description = "Initial deposit";
+        var amount = 150.00;
         var account = new Account(23456L, 345678L, 123456, 0.00);
-        transactionService.credit(account, "Initial deposit", 150.00);
-        assertTransaction(account, "Initial deposit", 150.00);
-    }
 
-    @Test
-    void should_make_credit_when_make_deposit() {
+        service.credit(account, description, amount);
 
-        var account = new Account(23456L, 345678L, 123456, 0.00);
-        transactionService.deposit(account, 2300.00);
-        assertTransaction(account, "Cash deposit", 2300.00);
-    }
+        then(repository).should(times(1)).save(captor.capture());
+        then(repository).shouldHaveNoMoreInteractions();
 
-    void assertTransaction(Account account, String description, Double amount){
-
-        then(transactionRepository).should(times(1)).save(transactionArgumentCaptor.capture());
-        then(transactionRepository).shouldHaveNoMoreInteractions();
-
-        var transaction = transactionArgumentCaptor.getValue();
+        var transaction = captor.getValue();
         assertNull(transaction.getId());
         assertEquals(description, transaction.getDescription());
         assertEquals(amount, transaction.getAmount());
-        assertEquals(account, transaction.getAccount());
+        assertSame(account, transaction.getAccount());
+    }
+
+    @Test
+    void should_throw_exception_when_credit_amount_is_not_positive() {
+
+        var description = "Cash deposit";
+        var amount = -150.00;
+        var account = new Account(23456L, 345678L, 123456, 100.00);
+
+        assertThatExceptionOfType(BusinessRuleException.class)
+                .isThrownBy(() -> service.credit(account, description, amount))
+                .withMessage("Transaction denied");
+
+        then(repository).shouldHaveNoInteractions();
     }
 }

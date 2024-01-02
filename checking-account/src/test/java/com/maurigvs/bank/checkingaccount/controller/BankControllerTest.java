@@ -2,10 +2,11 @@ package com.maurigvs.bank.checkingaccount.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.maurigvs.bank.checkingaccount.exception.AuthenticationException;
 import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.ErrorResponse;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
-import com.maurigvs.bank.checkingaccount.service.AccountService;
+import com.maurigvs.bank.checkingaccount.service.BankService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -38,31 +42,32 @@ class BankControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    AccountService accountService;
+    BankService service;
 
     @Test
-    void should_return_201_when_post_account() throws Exception {
+    void should_return_created_when_post_account() throws Exception {
 
         var request = new OpenAccountRequest(123L, 100.00, 123456);
-        willDoNothing().given(accountService).openAccount(any(OpenAccountRequest.class));
+        willDoNothing().given(service).openAccount(any(OpenAccountRequest.class));
 
         mockMvc.perform(post("/account/open")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(ofJsonFrom(request)))
                 .andExpect(status().isCreated());
 
-        then(accountService).should(times(1)).openAccount(eq(request));
-        then(accountService).shouldHaveNoMoreInteractions();
+        then(service).should(times(1)).openAccount(eq(request));
+        then(service).shouldHaveNoMoreInteractions();
     }
 
     @Test
-    void should_return_400_when_post_account_without_initial_deposit() throws Exception {
+    void should_return_bad_request_when_post_account_not_elegible() throws Exception {
 
         var request = new OpenAccountRequest(123L, 0.00, 123456);
-        var response = new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(), "A initial deposit is required to open account");
+        var response = new ErrorResponse(HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                "A initial deposit is required to open account");
 
         willThrow(new BusinessRuleException("A initial deposit is required to open account"))
-                .given(accountService).openAccount(any(OpenAccountRequest.class));
+                .given(service).openAccount(any(OpenAccountRequest.class));
 
         mockMvc.perform(post("/account/open")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -71,18 +76,47 @@ class BankControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(ofJsonFrom(response)));
 
-        then(accountService).should(times(1)).openAccount(eq(request));
-        then(accountService).shouldHaveNoMoreInteractions();
+        then(service).should(times(1)).openAccount(eq(request));
+        then(service).shouldHaveNoMoreInteractions();
     }
 
     @Test
-    void should_return_bad_request_when_basic_validation_fails() throws Exception {
+    void should_return_ok_when_post_deposit() throws Exception {
+
+        var accoundId = 234567L;
+        var pinCode = 123456;
+        var amount = 250.30;
+        willDoNothing().given(service).makeDeposit(anyLong(), anyInt(), anyDouble());
+
+        mockMvc.perform(post("/account/234567/123456/deposit/250.30"))
+                .andExpect(status().isAccepted());
+
+        then(service).should(times(1)).makeDeposit(accoundId, pinCode, amount);
+        then(service).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    void should_return_forbidden_when_post_deposit_with_wrong_pincode() throws Exception {
+
+        var response = new ErrorResponse(HttpStatus.FORBIDDEN.getReasonPhrase(), "Failed");
+        willThrow(new AuthenticationException("Failed")).given(service).makeDeposit(anyLong(), anyInt(), anyDouble());
+
+        mockMvc.perform(post("/account/234567/123456/deposit/250.30"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(ofJsonFrom(response)));
+
+        then(service).should().makeDeposit(234567L, 123456, 250.30);
+        then(service).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    void should_return_bad_request_when_open_account_validations_fails() throws Exception {
 
         var request = new OpenAccountRequest(null, null, null);
 
         var messagesExpected = List.of("The account holder id is required",
-                "The initial deposit is required",
-                "The pin code is required");
+                "The initial deposit is required", "The pin code is required");
 
         assertBadRequestWhenPostAccount(request, messagesExpected);
     }
@@ -108,7 +142,7 @@ class BankControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(ofJsonFrom(response)));
 
-        then(accountService).shouldHaveNoInteractions();
+        then(service).shouldHaveNoInteractions();
     }
 
     private static String ofJsonFrom(Object object) throws Exception {

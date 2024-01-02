@@ -11,6 +11,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class LocalExceptionHandler {
 
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleAuthenticationException(AuthenticationException ex){
+        return new ErrorResponse(HttpStatus.FORBIDDEN.getReasonPhrase(), ex.getMessage());
+    }
+
     @ExceptionHandler(BusinessRuleException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

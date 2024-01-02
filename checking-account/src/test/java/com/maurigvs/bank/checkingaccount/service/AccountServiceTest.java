@@ -1,11 +1,14 @@
 package com.maurigvs.bank.checkingaccount.service;
 
+import com.maurigvs.bank.checkingaccount.exception.AuthenticationException;
 import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
 import com.maurigvs.bank.checkingaccount.model.entity.Account;
 import com.maurigvs.bank.checkingaccount.repository.AccountRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -15,7 +18,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,66 +30,124 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
-@SpringBootTest(classes = {AccountService.class})
+@SpringBootTest(classes = {AccountServiceImpl.class})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class AccountServiceTest {
+public class AccountServiceTest {
 
     @Autowired
-    AccountService accountService;
+    AccountService service;
 
     @MockBean
-    AccountRepository accountRepository;
-
-    @MockBean
-    TransactionService transactionService;
+    AccountRepository repository;
 
     @Captor
-    ArgumentCaptor<Account> accountArgumentCaptor;
+    ArgumentCaptor<Account> captor;
 
-    @Test
-    void should_open_account_successfully() throws BusinessRuleException {
+    @Nested
+    @DisplayName("account main tests")
+    class MainTests {
 
-        var request = new OpenAccountRequest(1L, 100.00,123456);
-        given(accountRepository.save(any(Account.class))).willReturn(new Account(1L, 1L, 123456, 100.00));
+        @Test
+        void should_open_account() {
 
-        accountService.openAccount(request);
+            var request = new OpenAccountRequest(1L, 100.00,123456);
+            given(repository.save(any(Account.class))).willReturn(new Account(1L, 1L, 123456, 100.00));
 
-        then(accountRepository).should(times(1)).save(accountArgumentCaptor.capture());
-        then(accountRepository).shouldHaveNoMoreInteractions();
-        var account = accountArgumentCaptor.getValue();
+            service.openAccount(request);
 
-        then(transactionService).should(times(1)).credit(account, "Initial deposit", request.initialDeposit());
-        then(transactionService).shouldHaveNoMoreInteractions();
+            then(repository).should(times(1)).save(captor.capture());
+            then(repository).shouldHaveNoMoreInteractions();
 
-        assertNull(account.getId());
-        assertEquals(request.accountHolderId(), account.getAccountHolderId());
-        assertEquals(request.pinCode(), account.getPinCode());
-        assertEquals(request.initialDeposit(), account.getBalance());
-        assertTrue(account.getTransactions().isEmpty());
+            var account = captor.getValue();
+            assertNull(account.getId());
+            assertEquals(request.accountHolderId(), account.getAccountHolderId());
+            assertEquals(request.pinCode(), account.getPinCode());
+            assertNull(account.getBalance());
+            assertTrue(account.getTransactions().isEmpty());
+        }
+
+        @Test
+        void should_update_balance() {
+
+            var account = new Account(123L, 456L, 987654, 3465.12);
+            var amount = 1200.00;
+            given(repository.getReferenceById(anyLong())).willReturn(account);
+
+            service.updateBalance(account, amount);
+
+            then(repository).should(times(1)).getReferenceById(123L);
+            then(repository).shouldHaveNoMoreInteractions();
+
+            assertThat(account.getBalance()).isEqualTo(4665.12);
+        }
     }
 
-    @Test
-    void should_throw_exception_when_open_account_without_initial_deposit() {
+    @Nested
+    @DisplayName("account authentication tests")
+    class AuthenticateTests {
 
-        var request = new OpenAccountRequest(123L, 0.0, 123456);
+        @Test
+        void should_return_account_when_authenticate() throws AuthenticationException {
 
-        assertThatExceptionOfType(BusinessRuleException.class)
-                .isThrownBy(() -> accountService.openAccount(request))
-                .withMessage("A initial deposit is required to open account");
+            var accountId = 123L;
+            var pinCode = 987654;
+            var account = new Account(accountId, 456L, pinCode, 2430.00);
+            given(repository.findById(anyLong())).willReturn(Optional.of(account));
 
-        then(accountRepository).shouldHaveNoInteractions();
+            service.authenticate(accountId, pinCode);
+
+            then(repository).should(times(1)).findById(accountId);
+            then(repository).shouldHaveNoMoreInteractions();
+        }
+
+        @Test
+        void should_throw_exception_when_account_not_found() {
+
+            given(repository.findById(anyLong())).willReturn(Optional.empty());
+
+            assertThatExceptionOfType(AuthenticationException.class)
+                    .isThrownBy(() -> service.authenticate(123456L, 234567))
+                    .withMessage("Account not found");
+
+            then(repository).should(times(1)).findById(123456L);
+            then(repository).shouldHaveNoMoreInteractions();
+        }
+
+        @Test
+        void should_throw_exception_when_pincode_doest_not_match() {
+
+            var account = new Account(123L, 456L, 987654, 3465.12);
+            given(repository.findById(anyLong())).willReturn(Optional.of(account));
+
+            assertThatExceptionOfType(AuthenticationException.class)
+                    .isThrownBy(() -> service.authenticate(123L, 234567))
+                    .withMessage("Authentication failed");
+
+            then(repository).should(times(1)).findById(123L);
+            then(repository).shouldHaveNoMoreInteractions();
+        }
     }
 
-    @Test
-    void should_throw_exception_when_authentication_fails(){
+    @Nested
+    @DisplayName("account elegibility tests")
+    class CheckElegibilityTests{
 
-        given(accountRepository.findById(anyLong())).willReturn(Optional.empty());
+        @Test
+        void should_check_elegibility() {
 
-        assertThatExceptionOfType(BusinessRuleException.class)
-                .isThrownBy(() -> accountService.authenticate(123456L, 234567))
-                .withMessage("Account not found");
+            var request = new OpenAccountRequest(123L, 100.0, 123456);
 
-        then(accountRepository).should(times(1)).findById(123456L);
-        then(accountRepository).shouldHaveNoMoreInteractions();
+            assertDoesNotThrow(() -> service.checkElegibility(request));
+        }
+
+        @Test
+        void should_throw_exception_when_open_account_not_elegible() {
+
+            var request = new OpenAccountRequest(123L, 0.0, 123456);
+
+            assertThatExceptionOfType(BusinessRuleException.class)
+                    .isThrownBy(() -> service.checkElegibility(request))
+                    .withMessage("A initial deposit is required to open account");
+        }
     }
 }

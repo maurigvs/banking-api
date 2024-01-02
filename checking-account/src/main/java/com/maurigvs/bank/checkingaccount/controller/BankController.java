@@ -1,11 +1,13 @@
 package com.maurigvs.bank.checkingaccount.controller;
 
+import com.maurigvs.bank.checkingaccount.exception.AuthenticationException;
 import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
-import com.maurigvs.bank.checkingaccount.service.AccountService;
+import com.maurigvs.bank.checkingaccount.service.BankService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BankController {
 
-    private final AccountService accountService;
+    private final BankService bankService;
 
     @PostMapping("/open")
     @ResponseStatus(HttpStatus.CREATED)
     public void postAccount(@RequestBody @Valid OpenAccountRequest request) throws BusinessRuleException {
-        accountService.openAccount(request);
+        bankService.openAccount(request);
+    }
+
+    @PostMapping("/{accountId}/{pinCode}/deposit/{amount}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void postAccount(@PathVariable Long accountId,
+                            @PathVariable Integer pinCode,
+                            @PathVariable Double amount) throws BusinessRuleException {
+        bankService.makeDeposit(accountId, pinCode, amount);
     }
 }
