@@ -28,7 +28,7 @@ import static org.mockito.BDDMockito.then;
 
 @SpringBootTest(classes = {AccountServiceImpl.class})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-public class AccountServiceTest {
+public class AccountServiceImplTest {
 
     @Autowired
     AccountService service;

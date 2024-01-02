@@ -16,11 +16,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
 
 @SpringBootTest(classes = {TransactionServiceImpl.class})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class TransactionServiceTest {
+class TransactionServiceImplTest {
 
     @Autowired
     TransactionService service;

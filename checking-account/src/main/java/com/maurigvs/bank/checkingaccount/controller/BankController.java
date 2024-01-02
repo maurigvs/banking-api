@@ -1,15 +1,19 @@
 package com.maurigvs.bank.checkingaccount.controller;
 
+import com.maurigvs.bank.checkingaccount.exception.AuthenticationException;
 import com.maurigvs.bank.checkingaccount.exception.BusinessRuleException;
 import com.maurigvs.bank.checkingaccount.model.dto.OpenAccountRequest;
+import com.maurigvs.bank.checkingaccount.model.dto.StatementResponse;
 import com.maurigvs.bank.checkingaccount.service.BankService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BankController {
 
-    private final BankService bankService;
+    private final BankService service;
 
     @PostMapping("/open")
     @ResponseStatus(HttpStatus.CREATED)
     public void postAccount(@RequestBody @Valid OpenAccountRequest request) throws BusinessRuleException {
-        bankService.openAccount(request);
+        service.openAccount(request);
     }
 
     @PostMapping("/{accountId}/{pinCode}/deposit/{amount}")
@@ -31,7 +35,7 @@ public class BankController {
     public void postDeposit(@PathVariable Long accountId,
                             @PathVariable Integer pinCode,
                             @PathVariable Double amount) throws BusinessRuleException {
-        bankService.makeDeposit(accountId, pinCode, amount);
+        service.makeDeposit(accountId, pinCode, amount);
     }
 
     @PostMapping("/{accountId}/{pinCode}/withdraw/{amount}")
@@ -39,6 +43,15 @@ public class BankController {
     public void postWithdraw(@PathVariable Long accountId,
                             @PathVariable Integer pinCode,
                             @PathVariable Double amount) throws BusinessRuleException {
-        bankService.makeWithdraw(accountId, pinCode, amount);
+        service.makeWithdraw(accountId, pinCode, amount);
+    }
+
+    //TODO: Implement unit test
+    @GetMapping("/{accountId}/{pinCode}/statement")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public StatementResponse getStatement(@PathVariable Long accountId,
+                                          @PathVariable Integer pinCode) throws AuthenticationException {
+        return service.getStatement(accountId, pinCode);
     }
 }

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 
 @SpringBootTest(classes = {BankServiceImpl.class})
-class BankServiceTest {
+class BankServiceImplTest {
 
     @Autowired
     BankService service;
