@@ -58,8 +58,8 @@ class CompanyServiceTest {
 
         companyService.createCompany(request);
 
-        then(companyRepository).should(times(1)).existsByCnpj(request.cnpj());
-        then(companyRepository).should(times(1)).save(companyCaptor.capture());
+        then(companyRepository).should().existsByCnpj(request.cnpj());
+        then(companyRepository).should().save(companyCaptor.capture());
         then(companyRepository).shouldHaveNoMoreInteractions();
 
         var company = companyCaptor.getValue();
@@ -101,7 +101,7 @@ class CompanyServiceTest {
                 .isThrownBy(() -> companyService.createCompany(request))
                 .withMessage("The account holder already exists");
 
-        then(companyRepository).should(times(1)).existsByCnpj(request.cnpj());
+        then(companyRepository).should().existsByCnpj(request.cnpj());
         then(companyRepository).shouldHaveNoMoreInteractions();
     }
 

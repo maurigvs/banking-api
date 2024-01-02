@@ -47,7 +47,7 @@ class CompanyControllerTest {
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isCreated());
 
-        then(companyService).should(times(1)).createCompany(eq(request));
+        then(companyService).should().createCompany(eq(request));
         then(companyService).shouldHaveNoMoreInteractions();
     }
 

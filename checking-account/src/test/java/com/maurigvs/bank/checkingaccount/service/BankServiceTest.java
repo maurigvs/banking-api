@@ -41,7 +41,7 @@ class BankServiceTest {
         then(accounts).should().checkElegibility(request);
         then(accounts).should().openAccount(request);
         then(transactions).should().credit(account, description, request.initialDeposit());
-        then(accounts).should().updateBalance(account, request.initialDeposit());
+        then(accounts).should().creditAmount(account, request.initialDeposit());
         verifyNoMoreInteractions(accounts, transactions);
     }
 
@@ -59,7 +59,25 @@ class BankServiceTest {
 
         then(accounts).should().authenticate(accountId, pinCode);
         then(transactions).should().credit(account, description, amount);
-        then(accounts).should().updateBalance(account, amount);
+        then(accounts).should().creditAmount(account, amount);
+        verifyNoMoreInteractions(accounts, transactions);
+    }
+
+    @Test
+    void should_make_withdraw() throws BusinessRuleException {
+
+        var accountId = 123L;
+        var pinCode = 234567;
+        var amount = 70.00;
+        var account = new Account(123L, 123L, 234567, 150.00);
+        var description = "ATM Withdraw";
+        given(accounts.authenticate(anyLong(), anyInt())).willReturn(account);
+
+        service.makeWithdraw(accountId, pinCode, amount);
+
+        then(accounts).should().authenticate(accountId, pinCode);
+        then(transactions).should().debit(account, description, amount);
+        then(accounts).should().debitAmount(account, amount);
         verifyNoMoreInteractions(accounts, transactions);
     }
 }

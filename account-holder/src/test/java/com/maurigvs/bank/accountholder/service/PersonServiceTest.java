@@ -58,8 +58,8 @@ class PersonServiceTest {
 
         personService.createPerson(request);
 
-        then(personRepository).should(times(1)).existsByCpf(request.cpf());
-        then(personRepository).should(times(1)).save(personCaptor.capture());
+        then(personRepository).should().existsByCpf(request.cpf());
+        then(personRepository).should().save(personCaptor.capture());
         then(personRepository).shouldHaveNoMoreInteractions();
 
         var person = personCaptor.getValue();
@@ -100,7 +100,7 @@ class PersonServiceTest {
                 .isThrownBy(() -> personService.createPerson(request))
                 .withMessage("The account holder already exists");
 
-        then(personRepository).should(times(1)).existsByCpf(request.cpf());
+        then(personRepository).should().existsByCpf(request.cpf());
         then(personRepository).shouldHaveNoMoreInteractions();
     }
 

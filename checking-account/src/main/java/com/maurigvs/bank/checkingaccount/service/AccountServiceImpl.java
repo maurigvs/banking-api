@@ -36,7 +36,12 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void updateBalance(Account account, Double amount) {
+    public void creditAmount(Account account, Double amount) {
         repository.getReferenceById(account.getId()).updateBalance(amount);
+    }
+
+    @Override
+    public void debitAmount(Account account, Double amount) {
+        repository.getReferenceById(account.getId()).updateBalance(amount * -1);
     }
 }

@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
@@ -34,7 +32,7 @@ class TransactionServiceTest {
     ArgumentCaptor<Transaction> captor;
 
     @Test
-    void should_create_transaction_successfully() throws BusinessRuleException {
+    void should_create_credit_transaction_successfully() throws BusinessRuleException {
 
         var description = "Initial deposit";
         var amount = 150.00;
@@ -42,14 +40,14 @@ class TransactionServiceTest {
 
         service.credit(account, description, amount);
 
-        then(repository).should(times(1)).save(captor.capture());
+        then(repository).should().save(captor.capture());
         then(repository).shouldHaveNoMoreInteractions();
 
         var transaction = captor.getValue();
-        assertNull(transaction.getId());
-        assertEquals(description, transaction.getDescription());
-        assertEquals(amount, transaction.getAmount());
-        assertSame(account, transaction.getAccount());
+        assertThat(transaction.getId()).isNull();
+        assertThat(description).isEqualTo(transaction.getDescription());
+        assertThat(amount).isEqualTo(transaction.getAmount());
+        assertThat(account).isSameAs(transaction.getAccount());
     }
 
     @Test
@@ -64,5 +62,25 @@ class TransactionServiceTest {
                 .withMessage("Transaction denied");
 
         then(repository).shouldHaveNoInteractions();
+    }
+
+    @Test
+    void should_create_debit_transaction_successfully() throws BusinessRuleException {
+
+        var description = "ATM Withdraw";
+        var amount = 100.00;
+        var account = new Account(23456L, 345678L, 123456, 1000.00);
+
+        service.debit(account, description, amount);
+
+        then(repository).should().save(captor.capture());
+        then(repository).shouldHaveNoMoreInteractions();
+
+        var transaction = captor.getValue();
+        assertThat(transaction.getId()).isNull();
+        assertThat(transaction.getDescription()).isEqualTo(description);
+        assertThat(transaction.getAmount()).isEqualTo(amount * -1);
+        assertThat(description).isEqualTo(transaction.getDescription());
+        assertThat(transaction.getAccount()).isSameAs(account);
     }
 }

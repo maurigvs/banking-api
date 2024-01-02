@@ -38,7 +38,7 @@ public class BankController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void postWithdraw(@PathVariable Long accountId,
                             @PathVariable Integer pinCode,
-                            @PathVariable Double amount) {
+                            @PathVariable Double amount) throws BusinessRuleException {
         bankService.makeWithdraw(accountId, pinCode, amount);
     }
 }

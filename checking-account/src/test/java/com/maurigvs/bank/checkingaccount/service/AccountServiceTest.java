@@ -21,14 +21,10 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
 
 @SpringBootTest(classes = {AccountServiceImpl.class})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -55,30 +51,45 @@ public class AccountServiceTest {
 
             service.openAccount(request);
 
-            then(repository).should(times(1)).save(captor.capture());
+            then(repository).should().save(captor.capture());
             then(repository).shouldHaveNoMoreInteractions();
-
             var account = captor.getValue();
-            assertNull(account.getId());
-            assertEquals(request.accountHolderId(), account.getAccountHolderId());
-            assertEquals(request.pinCode(), account.getPinCode());
-            assertNull(account.getBalance());
-            assertTrue(account.getTransactions().isEmpty());
+
+            assertThat(account.getId()).isNull();
+            assertThat(account.getAccountHolderId()).isEqualTo(request.accountHolderId());
+            assertThat(account.getPinCode()).isEqualTo(request.pinCode());
+            assertThat(account.getBalance()).isZero();
+            assertThat(account.getTransactions()).isEmpty();
         }
 
         @Test
-        void should_update_balance() {
+        void should_update_balance_when_credit_amount() {
 
             var account = new Account(123L, 456L, 987654, 3465.12);
             var amount = 1200.00;
             given(repository.getReferenceById(anyLong())).willReturn(account);
 
-            service.updateBalance(account, amount);
+            service.creditAmount(account, amount);
 
-            then(repository).should(times(1)).getReferenceById(123L);
+            then(repository).should().getReferenceById(123L);
             then(repository).shouldHaveNoMoreInteractions();
 
             assertThat(account.getBalance()).isEqualTo(4665.12);
+        }
+
+        @Test
+        void should_update_balance_when_debit_amount() {
+
+            var account = new Account(123L, 456L, 987654, 2400.00);
+            var amount = 720.00;
+            given(repository.getReferenceById(anyLong())).willReturn(account);
+
+            service.debitAmount(account, amount);
+
+            then(repository).should().getReferenceById(123L);
+            then(repository).shouldHaveNoMoreInteractions();
+
+            assertThat(account.getBalance()).isEqualTo(1680.00);
         }
     }
 
@@ -94,10 +105,11 @@ public class AccountServiceTest {
             var account = new Account(accountId, 456L, pinCode, 2430.00);
             given(repository.findById(anyLong())).willReturn(Optional.of(account));
 
-            service.authenticate(accountId, pinCode);
+            var result = service.authenticate(accountId, pinCode);
 
-            then(repository).should(times(1)).findById(accountId);
+            then(repository).should().findById(accountId);
             then(repository).shouldHaveNoMoreInteractions();
+            assertThat(result).isSameAs(account);
         }
 
         @Test
@@ -109,7 +121,7 @@ public class AccountServiceTest {
                     .isThrownBy(() -> service.authenticate(123456L, 234567))
                     .withMessage("Account not found");
 
-            then(repository).should(times(1)).findById(123456L);
+            then(repository).should().findById(123456L);
             then(repository).shouldHaveNoMoreInteractions();
         }
 
@@ -123,7 +135,7 @@ public class AccountServiceTest {
                     .isThrownBy(() -> service.authenticate(123L, 234567))
                     .withMessage("Authentication failed");
 
-            then(repository).should(times(1)).findById(123L);
+            then(repository).should().findById(123L);
             then(repository).shouldHaveNoMoreInteractions();
         }
     }

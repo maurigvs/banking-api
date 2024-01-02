@@ -6,4 +6,6 @@ import com.maurigvs.bank.checkingaccount.model.entity.Account;
 public interface TransactionService {
 
     void credit(Account account, String description, Double amount) throws BusinessRuleException;
+
+    void debit(Account account, String description, Double amount) throws BusinessRuleException;
 }

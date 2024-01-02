@@ -13,5 +13,7 @@ public interface AccountService {
 
     Account openAccount(OpenAccountRequest request);
 
-    void updateBalance(Account account, Double amount);
+    void creditAmount(Account account, Double amount);
+
+    void debitAmount(Account account, Double amount);
 }

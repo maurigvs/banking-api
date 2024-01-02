@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
-    private final TransactionRepository transactionRepository;
+    private final TransactionRepository repository;
 
     @Override
     public void credit(Account account, String description, Double amount) throws BusinessRuleException {
@@ -19,6 +19,12 @@ public class TransactionServiceImpl implements TransactionService {
         if(Double.compare(0.0, amount) > 0)
             throw new BusinessRuleException("Transaction denied");
 
-        transactionRepository.save(new Transaction(null, description, amount, account));
+        repository.save(new Transaction(null, description, amount, account));
+    }
+
+    @Override
+    public void debit(Account account, String description, Double amount) {
+        if(Double.compare(0.0, amount) < 0) amount = amount * -1;
+        repository.save(new Transaction(null, description, amount, account));
     }
 }

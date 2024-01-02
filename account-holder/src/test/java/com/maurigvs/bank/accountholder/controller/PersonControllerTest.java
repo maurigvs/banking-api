@@ -49,7 +49,7 @@ class PersonControllerTest {
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isCreated());
 
-        then(personService).should(times(1)).createPerson(eq(request));
+        then(personService).should().createPerson(eq(request));
         then(personService).shouldHaveNoMoreInteractions();
     }
 

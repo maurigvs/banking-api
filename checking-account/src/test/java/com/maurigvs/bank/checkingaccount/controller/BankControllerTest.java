@@ -62,7 +62,7 @@ class BankControllerTest {
                             .content(ofJsonFrom(request)))
                     .andExpect(status().isCreated());
 
-            then(service).should(times(1)).openAccount(eq(request));
+            then(service).should().openAccount(eq(request));
             then(service).shouldHaveNoMoreInteractions();
         }
 
@@ -83,7 +83,7 @@ class BankControllerTest {
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(content().json(ofJsonFrom(response)));
 
-            then(service).should(times(1)).openAccount(eq(request));
+            then(service).should().openAccount(eq(request));
             then(service).shouldHaveNoMoreInteractions();
         }
 
@@ -138,7 +138,7 @@ class BankControllerTest {
             mockMvc.perform(post("/account/234567/123456/deposit/250.30"))
                     .andExpect(status().isAccepted());
 
-            then(service).should(times(1)).makeDeposit(accoundId, pinCode, amount);
+            then(service).should().makeDeposit(accoundId, pinCode, amount);
             then(service).shouldHaveNoMoreInteractions();
         }
 
@@ -173,7 +173,7 @@ class BankControllerTest {
             mockMvc.perform(post("/account/234567/123456/withdraw/70.00"))
                     .andExpect(status().isAccepted());
 
-            then(service).should(times(1)).makeWithdraw(accoundId, pinCode, amount);
+            then(service).should().makeWithdraw(accoundId, pinCode, amount);
             then(service).shouldHaveNoMoreInteractions();
         }
     }
