@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/account")
 @RequiredArgsConstructor
-public class AccountController {
+public class BankController {
 
     private final AccountService accountService;
 
