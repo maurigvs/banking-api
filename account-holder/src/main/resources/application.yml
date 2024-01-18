@@ -1,7 +1,7 @@
 server:
   servlet:
     context-path: /bank
-  port: 8080
+  port: 8081
 spring:
   datasource:
     url: jdbc:h2:mem:account-holders-db
