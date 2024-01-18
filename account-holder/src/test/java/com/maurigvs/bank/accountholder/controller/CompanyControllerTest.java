@@ -1,8 +1,8 @@
 package com.maurigvs.bank.accountholder.controller;
 
-import com.maurigvs.bank.accountholder.mock.Mocks;
 import com.maurigvs.bank.accountholder.controller.dto.CreateCompanyRequest;
 import com.maurigvs.bank.accountholder.controller.dto.ErrorResponse;
+import com.maurigvs.bank.accountholder.mock.Mocks;
 import com.maurigvs.bank.accountholder.service.CompanyService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -20,7 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
