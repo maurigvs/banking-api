@@ -1,4 +1,4 @@
-package com.maurigvs.bank.accounts.model.entity;
+package com.maurigvs.bank.accounts.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

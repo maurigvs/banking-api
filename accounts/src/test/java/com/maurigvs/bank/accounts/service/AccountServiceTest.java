@@ -1,7 +1,7 @@
 package com.maurigvs.bank.accounts.service;
 
 import com.maurigvs.bank.accounts.controller.dto.AccountRequest;
-import com.maurigvs.bank.accounts.model.entity.Account;
+import com.maurigvs.bank.accounts.model.Account;
 import com.maurigvs.bank.accounts.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
