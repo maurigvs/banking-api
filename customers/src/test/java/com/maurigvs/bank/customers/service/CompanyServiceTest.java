@@ -57,7 +57,7 @@ class CompanyServiceTest {
 
         companyService.createCompany(request);
 
-        then(companyRepository).should().existsByCnpj(request.cnpj());
+        then(companyRepository).should().existsByCnpj(request.taxId());
         then(companyRepository).should().save(companyCaptor.capture());
         then(companyRepository).shouldHaveNoMoreInteractions();
 
@@ -68,9 +68,9 @@ class CompanyServiceTest {
         assertThat(company.getLegalName()).isEqualTo(request.legalName());
         assertThat(company.getBusinessName()).isEqualTo(request.businessName());
         assertThat(company.getOpeningDate()).isEqualTo(LocalDate.of(2013,5,3));
-        assertThat(company.getCnpj()).isEqualTo(request.cnpj());
-        assertThat(company.getEmail()).isEqualTo(request.contactEmail());
-        assertThat(company.getPhoneNumber()).isEqualTo(request.contactPhoneNumber());
+        assertThat(company.getCnpj()).isEqualTo(request.taxId());
+        assertThat(company.getEmail()).isEqualTo(request.email());
+        assertThat(company.getPhoneNumber()).isEqualTo(request.phoneNumber());
     }
 
     @Test
@@ -79,9 +79,9 @@ class CompanyServiceTest {
         var openingDate = LocalDate.now().minusMonths(6).plusDays(1)
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        var request = new PostCompanyDto("Company Services",
-                "Company Services Ltd.", openingDate, "86580512180",
-                "john@wayne.com", "+5511984833929");
+        var request = new PostCompanyDto("86580512180",
+                "Company Services","Company Services Ltd.",
+                openingDate, "john@wayne.com", "+5511984833929");
 
         assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> companyService.createCompany(request))
@@ -100,16 +100,16 @@ class CompanyServiceTest {
                 .isThrownBy(() -> companyService.createCompany(request))
                 .withMessage("The account holder already exists");
 
-        then(companyRepository).should().existsByCnpj(request.cnpj());
+        then(companyRepository).should().existsByCnpj(request.taxId());
         then(companyRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void should_throw_exception_if_birth_date_is_invalid_when_create_company() {
 
-        var request = new PostCompanyDto("Company Services",
-                "Company Services Ltd.", "2013-05-03", "86580512180",
-                "john@wayne.com", "+5511984833929");
+        var request = new PostCompanyDto("86580512180",
+                "Company Services", "Company Services Ltd.",
+                "2013-05-03", "john@wayne.com", "+5511984833929");
 
         assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> companyService.createCompany(request))

@@ -43,7 +43,7 @@ class PersonControllerTest {
         var request = Mocks.ofCreatePersonRequest();
         willDoNothing().given(personService).createPerson(any(PostPersonDto.class));
 
-        mockMvc.perform(post("/account-holder/person")
+        mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isCreated());
@@ -61,7 +61,7 @@ class PersonControllerTest {
         willThrow(new BusinessException("The account holder already exists"))
                 .given(personService).createPerson(any(PostPersonDto.class));
 
-        mockMvc.perform(post("/account-holder/person")
+        mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isBadRequest())
@@ -76,12 +76,12 @@ class PersonControllerTest {
                 null, null, null);
 
         var messages = List.of(
-                "The birth date is required",
-                "The cpf is required",
-                "The email address is required",
-                "The name is required",
-                "The phone number is required",
-                "The surname is required");
+                "birthDate is required",
+                "email is required",
+                "name is required",
+                "phoneNumber is required",
+                "surname is required",
+                "taxId is required");
 
         assertBadRequestWhenPostPerson(request, messages);
     }
@@ -89,10 +89,11 @@ class PersonControllerTest {
     @Test
     void should_return_bad_request_when_cpf_validation_fails() throws Exception {
 
-        var request = new PostPersonDto("John", "Mayer", "23/05/1983",
-                "123456", "john@mayer.com", "+1345678234");
+        var request = new PostPersonDto("123456",
+                "John", "Mayer", "23/05/1983",
+                 "john@mayer.com", "+1345678234");
 
-        var messages = List.of("The cpf must have 11 numbers without any other characters");
+        var messages = List.of("taxId must have 11 digits");
 
         assertBadRequestWhenPostPerson(request, messages);
     }
@@ -100,10 +101,11 @@ class PersonControllerTest {
     @Test
     void should_return_bad_request_when_email_validation_fails() throws Exception {
 
-        var request = new PostPersonDto("John", "Mayer", "23/05/1983",
-                "123456", "john@mayer.com", "+1345678234");
+        var request = new PostPersonDto("123456",
+                "John", "Mayer", "23/05/1983",
+                 "john@mayer.com", "+1345678234");
 
-        var messages = List.of("The cpf must have 11 numbers without any other characters");
+        var messages = List.of("taxId must have 11 digits");
 
         assertBadRequestWhenPostPerson(request, messages);
     }
@@ -112,7 +114,7 @@ class PersonControllerTest {
 
         var response = new ExceptionDto("Bad Request", messages);
 
-        mockMvc.perform(post("/account-holder/person")
+        mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isBadRequest())

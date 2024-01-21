@@ -57,7 +57,7 @@ class PersonServiceTest {
 
         personService.createPerson(request);
 
-        then(personRepository).should().existsByCpf(request.cpf());
+        then(personRepository).should().existsByCpf(request.taxId());
         then(personRepository).should().save(personCaptor.capture());
         then(personRepository).shouldHaveNoMoreInteractions();
 
@@ -68,7 +68,7 @@ class PersonServiceTest {
         assertThat(person.getName()).isEqualTo(request.name());
         assertThat(person.getSurname()).isEqualTo(request.surname());
         assertThat(person.getBirthDate()).isEqualTo(LocalDate.of(1988,7,28));
-        assertThat(person.getCpf()).isEqualTo(request.cpf());
+        assertThat(person.getCpf()).isEqualTo(request.taxId());
         assertThat(person.getEmail()).isEqualTo(request.email());
         assertThat(person.getPhoneNumber()).isEqualTo(request.phoneNumber());
     }
@@ -79,8 +79,9 @@ class PersonServiceTest {
         var birthDate = LocalDate.now().minusYears(18).plusDays(1)
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        var request = new PostPersonDto("John", "Wayne", birthDate,
-                "86580512180", "john@wayne.com", "+5511984833929");
+        var request = new PostPersonDto("86580512180",
+                "John", "Wayne", birthDate,
+                 "john@wayne.com", "+5511984833929");
 
         assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> personService.createPerson(request))
@@ -99,15 +100,16 @@ class PersonServiceTest {
                 .isThrownBy(() -> personService.createPerson(request))
                 .withMessage("The account holder already exists");
 
-        then(personRepository).should().existsByCpf(request.cpf());
+        then(personRepository).should().existsByCpf(request.taxId());
         then(personRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void should_throw_exception_if_birth_date_is_invalid_when_create_person() {
 
-        var request = new PostPersonDto("John", "Wayne", "1988-07-28",
-                "86580512180", "john@wayne.com", "+5511984833929");
+        var request = new PostPersonDto("86580512180",
+                "John", "Wayne", "1988-07-28",
+                 "john@wayne.com", "+5511984833929");
 
         assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> personService.createPerson(request))

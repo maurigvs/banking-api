@@ -41,7 +41,7 @@ class CompanyControllerTest {
         var request = Mocks.ofCreateCompanyRequest();
         willDoNothing().given(companyService).createCompany(any(PostCompanyDto.class));
 
-        mockMvc.perform(post("/account-holder/company")
+        mockMvc.perform(post("/customer/company")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isCreated());
@@ -57,12 +57,12 @@ class CompanyControllerTest {
                 null, null, null);
 
         var messages = List.of(
-                "The business name is required",
-                "The cnpj is required",
-                "The contact email address is required",
-                "The contact phone number is required",
-                "The legal name is required",
-                "The opening date is required");
+                "businessName is required",
+                "email is required",
+                "legalName is required",
+                "phoneNumber is required",
+                "startDate is required",
+                "taxId is required");
 
         assertBadRequestWhenPostCompany(request, messages);
     }
@@ -70,10 +70,11 @@ class CompanyControllerTest {
     @Test
     void should_return_bad_request_when_cnpj_validation_fails() throws Exception {
 
-        var request = new PostCompanyDto("Apple Inc.", "Apple", "01/07/1980",
-                "12345", "contact@apple.com", "+551199882211");
+        var request = new PostCompanyDto("12345",
+                "Apple Inc.", "Apple", "01/07/1980",
+                "contact@apple.com", "+551199882211");
 
-        var messages = List.of("The cnpj must have 14 numbers without any other characters");
+        var messages = List.of("taxId must have 14 digits");
 
         assertBadRequestWhenPostCompany(request, messages);
     }
@@ -81,10 +82,11 @@ class CompanyControllerTest {
     @Test
     void should_return_bad_request_when_contact_email_validation_fails() throws Exception {
 
-        var request = new PostCompanyDto("Apple Inc.", "Apple", "01/07/1980",
-                "72097237000143", "emailtypedwrong.com", "+551199882211");
+        var request = new PostCompanyDto("72097237000143",
+                "Apple Inc.", "Apple", "01/07/1980",
+                "emailtypedwrong.com", "+551199882211");
 
-        var messages = List.of("The contact email must be an valid address");
+        var messages = List.of("email must be a well-formed email address");
 
         assertBadRequestWhenPostCompany(request, messages);
     }
@@ -93,7 +95,7 @@ class CompanyControllerTest {
 
         var response = new ExceptionDto("Bad Request", messages);
 
-        mockMvc.perform(post("/account-holder/company")
+        mockMvc.perform(post("/customer/company")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isBadRequest())

@@ -17,7 +17,7 @@ public class CompanyService extends CustomerService {
 
     public void createCompany(PostCompanyDto request) throws Exception {
 
-        var openingDate = localDateFrom(request.openingDate());
+        var openingDate = localDateFrom(request.startDate());
 
         if(companyNotOldEnough(openingDate))
             throw new BusinessException("The company needs to be older than 6 months");
@@ -26,8 +26,8 @@ public class CompanyService extends CustomerService {
             throw new BusinessException("The account holder already exists");
 
         companyRepository.save(new Company(null, LocalDate.now(), true,
-                request.legalName(), request.businessName(), localDateFrom(request.openingDate()),
-                request.cnpj(), request.contactEmail(), request.contactPhoneNumber()));
+                request.legalName(), request.businessName(), localDateFrom(request.startDate()),
+                request.taxId(), request.email(), request.phoneNumber()));
     }
 
     private boolean companyNotOldEnough(LocalDate openingDate) {
@@ -35,6 +35,6 @@ public class CompanyService extends CustomerService {
     }
 
     private boolean companyAlreadyExists(PostCompanyDto request) {
-        return companyRepository.existsByCnpj(request.cnpj());
+        return companyRepository.existsByCnpj(request.taxId());
     }
 }

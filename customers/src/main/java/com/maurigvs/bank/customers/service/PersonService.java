@@ -27,7 +27,7 @@ public class PersonService extends CustomerService {
 
         personRepository.save(new Person(null, LocalDate.now(), true,
                 request.name(), request.surname(), birthDate,
-                request.cpf(), request.email(), request.phoneNumber()));
+                request.taxId(), request.email(), request.phoneNumber()));
     }
 
     private boolean personIsUnderAge(LocalDate birthDate) {
@@ -35,6 +35,6 @@ public class PersonService extends CustomerService {
     }
 
     private boolean personAlreadyExists(PostPersonDto request) {
-        return personRepository.existsByCpf(request.cpf());
+        return personRepository.existsByCpf(request.taxId());
     }
 }
