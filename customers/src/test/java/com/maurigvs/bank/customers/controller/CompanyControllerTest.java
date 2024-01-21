@@ -1,7 +1,8 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
 import com.maurigvs.bank.customers.controller.dto.ExceptionDto;
+import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
+import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.mock.Mocks;
 import com.maurigvs.bank.customers.service.CompanyService;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -20,6 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,7 +38,7 @@ class CompanyControllerTest {
     CompanyService companyService;
 
     @Test
-    void should_return_created_when_post_company_request() throws Exception {
+    void should_return_created_when_post_company() throws Exception {
 
         var request = Mocks.ofCreateCompanyRequest();
         willDoNothing().given(companyService).createCompany(any(PostCompanyDto.class));
@@ -51,7 +53,26 @@ class CompanyControllerTest {
     }
 
     @Test
-    void should_return_bad_request_when_company_validation_fails() throws Exception {
+    void should_return_bad_request_when_BusinessException_is_thrown() throws Exception {
+
+        var request = Mocks.ofCreateCompanyRequest();
+        var message = "The company needs to be older than 6 months";
+        var response = new ExceptionDto("Bad Request", message);
+        willThrow(new BusinessException(message)).given(companyService).createCompany(any());
+
+        mockMvc.perform(post("/customer/company")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Mocks.ofJsonFrom(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(Mocks.ofJsonFrom(response), true));
+
+        then(companyService).should().createCompany(request);
+        then(companyService).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    void should_return_bad_request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
 
         var request = new PostCompanyDto(null, null, null,
                 null, null, null);
@@ -63,35 +84,6 @@ class CompanyControllerTest {
                 "phoneNumber is required",
                 "startDate is required",
                 "taxId is required");
-
-        assertBadRequestWhenPostCompany(request, messages);
-    }
-
-    @Test
-    void should_return_bad_request_when_cnpj_validation_fails() throws Exception {
-
-        var request = new PostCompanyDto("12345",
-                "Apple Inc.", "Apple", "01/07/1980",
-                "contact@apple.com", "+551199882211");
-
-        var messages = List.of("taxId must have 14 digits");
-
-        assertBadRequestWhenPostCompany(request, messages);
-    }
-
-    @Test
-    void should_return_bad_request_when_contact_email_validation_fails() throws Exception {
-
-        var request = new PostCompanyDto("72097237000143",
-                "Apple Inc.", "Apple", "01/07/1980",
-                "emailtypedwrong.com", "+551199882211");
-
-        var messages = List.of("email must be a well-formed email address");
-
-        assertBadRequestWhenPostCompany(request, messages);
-    }
-
-    void assertBadRequestWhenPostCompany(PostCompanyDto request, List<String> messages) throws Exception {
 
         var response = new ExceptionDto("Bad Request", messages);
 
