@@ -1,19 +1,12 @@
 package com.maurigvs.bank.accounts.service;
 
-import com.maurigvs.bank.accounts.exception.AuthenticationException;
-import com.maurigvs.bank.accounts.exception.BusinessRuleException;
-import com.maurigvs.bank.accounts.model.dto.OpenAccountRequest;
-import com.maurigvs.bank.accounts.model.entity.Account;
+import com.maurigvs.bank.accounts.model.dto.AccountRequest;
+import org.springframework.stereotype.Service;
 
-public interface AccountService {
+@Service
+public class AccountService {
 
-    Account authenticate(long accoundId, int pinCode) throws AuthenticationException;
+    public void openAccount(AccountRequest eq) {
 
-    void checkElegibility(OpenAccountRequest request) throws BusinessRuleException;
-
-    Account openAccount(OpenAccountRequest request);
-
-    void creditAmount(Account account, Double amount);
-
-    void debitAmount(Account account, Double amount);
+    }
 }
