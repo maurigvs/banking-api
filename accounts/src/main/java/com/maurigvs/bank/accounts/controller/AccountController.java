@@ -1,7 +1,8 @@
 package com.maurigvs.bank.accounts.controller;
 
-import com.maurigvs.bank.accounts.model.dto.AccountRequest;
+import com.maurigvs.bank.accounts.controller.dto.AccountRequest;
 import com.maurigvs.bank.accounts.service.AccountService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final AccountService accountService;
+    private final AccountService service;
 
     @PostMapping("/account/commercial")
     @ResponseStatus(HttpStatus.CREATED)
-    public void postAccount(@RequestBody AccountRequest request){
-        accountService.openAccount(request);
+    public void postAccount(@RequestBody @Valid AccountRequest request){
+        service.createAccount(request);
     }
 }

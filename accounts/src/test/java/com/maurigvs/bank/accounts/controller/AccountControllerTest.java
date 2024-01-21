@@ -1,7 +1,8 @@
 package com.maurigvs.bank.accounts.controller;
 
+import com.maurigvs.bank.accounts.controller.dto.AccountRequest;
+import com.maurigvs.bank.accounts.controller.dto.ExceptionResponse;
 import com.maurigvs.bank.accounts.mock.Mocks;
-import com.maurigvs.bank.accounts.model.dto.AccountRequest;
 import com.maurigvs.bank.accounts.service.AccountService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -13,11 +14,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.eq;
+import java.util.List;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AccountController.class)
@@ -29,7 +33,7 @@ class AccountControllerTest {
     private MockMvc mockMvc;
     
     @MockBean
-    private AccountService accountService;
+    private AccountService service;
 
     @Test
     void should_return_created_when_post_account_successfully() throws Exception {
@@ -41,7 +45,25 @@ class AccountControllerTest {
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isCreated());
 
-        verify(accountService, times(1)).openAccount(eq(request));
-        verifyNoMoreInteractions(accountService);
+        verify(service, times(1)).createAccount(request);
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    void should_return_bad_request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
+
+        var request = new AccountRequest("12345", 1111);
+
+        var response = new ExceptionResponse("Bad Request",
+                List.of("pinCode must have 6 digits", "taxId must have 14 digits"));
+
+        mockMvc.perform(post("/account/commercial")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(Mocks.ofJsonFrom(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(Mocks.ofJsonFrom(response), true));
+
+        verifyNoInteractions(service);
     }
 }
