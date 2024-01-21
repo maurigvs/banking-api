@@ -1,7 +1,7 @@
 package com.maurigvs.bank.customers.service;
 
-import com.maurigvs.bank.customers.controller.dto.CreatePersonRequest;
-import com.maurigvs.bank.customers.exception.BusinessRuleException;
+import com.maurigvs.bank.customers.controller.dto.PostPersonDto;
+import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.model.Person;
 import com.maurigvs.bank.customers.repository.PersonRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +15,15 @@ public class PersonService extends CustomerService {
 
     private final PersonRepository personRepository;
 
-    public void createPerson(CreatePersonRequest request) throws Exception {
+    public void createPerson(PostPersonDto request) throws Exception {
 
         var birthDate = localDateFrom(request.birthDate());
 
         if(personIsUnderAge(birthDate))
-            throw new BusinessRuleException("The account holder must have 18 years of age completed.");
+            throw new BusinessException("The account holder must have 18 years of age completed.");
 
         if(personAlreadyExists(request))
-            throw new BusinessRuleException("The account holder already exists");
+            throw new BusinessException("The account holder already exists");
 
         personRepository.save(new Person(null, LocalDate.now(), true,
                 request.name(), request.surname(), birthDate,
@@ -34,7 +34,7 @@ public class PersonService extends CustomerService {
         return birthDate.isAfter(LocalDate.now().minusYears(18));
     }
 
-    private boolean personAlreadyExists(CreatePersonRequest request) {
+    private boolean personAlreadyExists(PostPersonDto request) {
         return personRepository.existsByCpf(request.cpf());
     }
 }

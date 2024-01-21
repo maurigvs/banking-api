@@ -1,8 +1,8 @@
 package com.maurigvs.bank.customers.service;
 
 import com.maurigvs.bank.customers.mock.Mocks;
-import com.maurigvs.bank.customers.controller.dto.CreatePersonRequest;
-import com.maurigvs.bank.customers.exception.BusinessRuleException;
+import com.maurigvs.bank.customers.controller.dto.PostPersonDto;
+import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.model.Person;
 import com.maurigvs.bank.customers.repository.PersonRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,10 +79,10 @@ class PersonServiceTest {
         var birthDate = LocalDate.now().minusYears(18).plusDays(1)
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        var request = new CreatePersonRequest("John", "Wayne", birthDate,
+        var request = new PostPersonDto("John", "Wayne", birthDate,
                 "86580512180", "john@wayne.com", "+5511984833929");
 
-        assertThatExceptionOfType(BusinessRuleException.class)
+        assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> personService.createPerson(request))
                 .withMessage("The account holder must have 18 years of age completed.");
 
@@ -95,7 +95,7 @@ class PersonServiceTest {
         var request = Mocks.ofCreatePersonRequest();
         given(personRepository.existsByCpf(anyString())).willReturn(true);
 
-        assertThatExceptionOfType(BusinessRuleException.class)
+        assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> personService.createPerson(request))
                 .withMessage("The account holder already exists");
 
@@ -106,10 +106,10 @@ class PersonServiceTest {
     @Test
     void should_throw_exception_if_birth_date_is_invalid_when_create_person() {
 
-        var request = new CreatePersonRequest("John", "Wayne", "1988-07-28",
+        var request = new PostPersonDto("John", "Wayne", "1988-07-28",
                 "86580512180", "john@wayne.com", "+5511984833929");
 
-        assertThatExceptionOfType(BusinessRuleException.class)
+        assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> personService.createPerson(request))
                 .withMessage("The date must have the format: dd/MM/yyyy");
 

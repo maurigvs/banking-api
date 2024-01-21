@@ -3,7 +3,7 @@ package com.maurigvs.bank.customers.controller.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record CreatePersonRequest(
+public record PostPersonDto(
 
         @NotBlank(message = "The name is required")
         String name,

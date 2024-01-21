@@ -1,7 +1,7 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.controller.dto.CreateCompanyRequest;
-import com.maurigvs.bank.customers.controller.dto.ErrorResponse;
+import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
+import com.maurigvs.bank.customers.controller.dto.ExceptionDto;
 import com.maurigvs.bank.customers.mock.Mocks;
 import com.maurigvs.bank.customers.service.CompanyService;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -39,7 +39,7 @@ class CompanyControllerTest {
     void should_return_created_when_post_company_request() throws Exception {
 
         var request = Mocks.ofCreateCompanyRequest();
-        willDoNothing().given(companyService).createCompany(any(CreateCompanyRequest.class));
+        willDoNothing().given(companyService).createCompany(any(PostCompanyDto.class));
 
         mockMvc.perform(post("/account-holder/company")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,7 +53,7 @@ class CompanyControllerTest {
     @Test
     void should_return_bad_request_when_company_validation_fails() throws Exception {
 
-        var request = new CreateCompanyRequest(null, null, null,
+        var request = new PostCompanyDto(null, null, null,
                 null, null, null);
 
         var messages = List.of(
@@ -70,7 +70,7 @@ class CompanyControllerTest {
     @Test
     void should_return_bad_request_when_cnpj_validation_fails() throws Exception {
 
-        var request = new CreateCompanyRequest("Apple Inc.", "Apple", "01/07/1980",
+        var request = new PostCompanyDto("Apple Inc.", "Apple", "01/07/1980",
                 "12345", "contact@apple.com", "+551199882211");
 
         var messages = List.of("The cnpj must have 14 numbers without any other characters");
@@ -81,7 +81,7 @@ class CompanyControllerTest {
     @Test
     void should_return_bad_request_when_contact_email_validation_fails() throws Exception {
 
-        var request = new CreateCompanyRequest("Apple Inc.", "Apple", "01/07/1980",
+        var request = new PostCompanyDto("Apple Inc.", "Apple", "01/07/1980",
                 "72097237000143", "emailtypedwrong.com", "+551199882211");
 
         var messages = List.of("The contact email must be an valid address");
@@ -89,9 +89,9 @@ class CompanyControllerTest {
         assertBadRequestWhenPostCompany(request, messages);
     }
 
-    void assertBadRequestWhenPostCompany(CreateCompanyRequest request, List<String> messages) throws Exception {
+    void assertBadRequestWhenPostCompany(PostCompanyDto request, List<String> messages) throws Exception {
 
-        var response = new ErrorResponse("Bad Request", messages);
+        var response = new ExceptionDto("Bad Request", messages);
 
         mockMvc.perform(post("/account-holder/company")
                         .contentType(MediaType.APPLICATION_JSON)

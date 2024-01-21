@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record CreateCompanyRequest(
+public record PostCompanyDto(
 
         @NotBlank(message = "The legal name is required")
         String legalName,

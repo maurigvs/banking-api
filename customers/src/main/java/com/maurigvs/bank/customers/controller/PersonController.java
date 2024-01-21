@@ -1,6 +1,6 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.controller.dto.CreatePersonRequest;
+import com.maurigvs.bank.customers.controller.dto.PostPersonDto;
 import com.maurigvs.bank.customers.service.PersonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class PersonController {
 
     @PostMapping("/person")
     @ResponseStatus(HttpStatus.CREATED)
-    public void postPerson(@RequestBody @Valid CreatePersonRequest request) throws Exception {
+    public void postPerson(@RequestBody @Valid PostPersonDto request) throws Exception {
         personService.createPerson(request);
     }
 }

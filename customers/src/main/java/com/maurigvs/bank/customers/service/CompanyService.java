@@ -1,7 +1,7 @@
 package com.maurigvs.bank.customers.service;
 
-import com.maurigvs.bank.customers.controller.dto.CreateCompanyRequest;
-import com.maurigvs.bank.customers.exception.BusinessRuleException;
+import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
+import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.model.Company;
 import com.maurigvs.bank.customers.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +15,15 @@ public class CompanyService extends CustomerService {
 
     private final CompanyRepository companyRepository;
 
-    public void createCompany(CreateCompanyRequest request) throws Exception {
+    public void createCompany(PostCompanyDto request) throws Exception {
 
         var openingDate = localDateFrom(request.openingDate());
 
         if(companyNotOldEnough(openingDate))
-            throw new BusinessRuleException("The company needs to be older than 6 months");
+            throw new BusinessException("The company needs to be older than 6 months");
 
         if(companyAlreadyExists(request))
-            throw new BusinessRuleException("The account holder already exists");
+            throw new BusinessException("The account holder already exists");
 
         companyRepository.save(new Company(null, LocalDate.now(), true,
                 request.legalName(), request.businessName(), localDateFrom(request.openingDate()),
@@ -34,7 +34,7 @@ public class CompanyService extends CustomerService {
         return openingDate.isAfter(LocalDate.now().minusMonths(6));
     }
 
-    private boolean companyAlreadyExists(CreateCompanyRequest request) {
+    private boolean companyAlreadyExists(PostCompanyDto request) {
         return companyRepository.existsByCnpj(request.cnpj());
     }
 }

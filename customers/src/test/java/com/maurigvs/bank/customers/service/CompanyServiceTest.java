@@ -1,8 +1,8 @@
 package com.maurigvs.bank.customers.service;
 
 import com.maurigvs.bank.customers.mock.Mocks;
-import com.maurigvs.bank.customers.controller.dto.CreateCompanyRequest;
-import com.maurigvs.bank.customers.exception.BusinessRuleException;
+import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
+import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.model.Company;
 import com.maurigvs.bank.customers.repository.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,11 +79,11 @@ class CompanyServiceTest {
         var openingDate = LocalDate.now().minusMonths(6).plusDays(1)
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        var request = new CreateCompanyRequest("Company Services",
+        var request = new PostCompanyDto("Company Services",
                 "Company Services Ltd.", openingDate, "86580512180",
                 "john@wayne.com", "+5511984833929");
 
-        assertThatExceptionOfType(BusinessRuleException.class)
+        assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> companyService.createCompany(request))
                 .withMessage("The company needs to be older than 6 months");
 
@@ -96,7 +96,7 @@ class CompanyServiceTest {
         var request = Mocks.ofCreateCompanyRequest();
         given(companyRepository.existsByCnpj(anyString())).willReturn(true);
 
-        assertThatExceptionOfType(BusinessRuleException.class)
+        assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> companyService.createCompany(request))
                 .withMessage("The account holder already exists");
 
@@ -107,11 +107,11 @@ class CompanyServiceTest {
     @Test
     void should_throw_exception_if_birth_date_is_invalid_when_create_company() {
 
-        var request = new CreateCompanyRequest("Company Services",
+        var request = new PostCompanyDto("Company Services",
                 "Company Services Ltd.", "2013-05-03", "86580512180",
                 "john@wayne.com", "+5511984833929");
 
-        assertThatExceptionOfType(BusinessRuleException.class)
+        assertThatExceptionOfType(BusinessException.class)
                 .isThrownBy(() -> companyService.createCompany(request))
                 .withMessage("The date must have the format: dd/MM/yyyy");
 

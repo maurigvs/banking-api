@@ -1,9 +1,9 @@
 package com.maurigvs.bank.customers.controller;
 
 import com.maurigvs.bank.customers.mock.Mocks;
-import com.maurigvs.bank.customers.controller.dto.CreatePersonRequest;
-import com.maurigvs.bank.customers.controller.dto.ErrorResponse;
-import com.maurigvs.bank.customers.exception.BusinessRuleException;
+import com.maurigvs.bank.customers.controller.dto.PostPersonDto;
+import com.maurigvs.bank.customers.controller.dto.ExceptionDto;
+import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.service.PersonService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -41,7 +41,7 @@ class PersonControllerTest {
     void should_return_created_when_post_person_request() throws Exception {
 
         var request = Mocks.ofCreatePersonRequest();
-        willDoNothing().given(personService).createPerson(any(CreatePersonRequest.class));
+        willDoNothing().given(personService).createPerson(any(PostPersonDto.class));
 
         mockMvc.perform(post("/account-holder/person")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -56,10 +56,10 @@ class PersonControllerTest {
     void should_return_bad_request_when_exception_is_thrown() throws Exception {
 
         var request = Mocks.ofCreatePersonRequest();
-        var response = new ErrorResponse("Bad Request","The account holder already exists");
+        var response = new ExceptionDto("Bad Request","The account holder already exists");
 
-        willThrow(new BusinessRuleException("The account holder already exists"))
-                .given(personService).createPerson(any(CreatePersonRequest.class));
+        willThrow(new BusinessException("The account holder already exists"))
+                .given(personService).createPerson(any(PostPersonDto.class));
 
         mockMvc.perform(post("/account-holder/person")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +72,7 @@ class PersonControllerTest {
     @Test
     void should_return_bad_request_when_person_validation_fails() throws Exception {
 
-        var request = new CreatePersonRequest(null, null, null,
+        var request = new PostPersonDto(null, null, null,
                 null, null, null);
 
         var messages = List.of(
@@ -89,7 +89,7 @@ class PersonControllerTest {
     @Test
     void should_return_bad_request_when_cpf_validation_fails() throws Exception {
 
-        var request = new CreatePersonRequest("John", "Mayer", "23/05/1983",
+        var request = new PostPersonDto("John", "Mayer", "23/05/1983",
                 "123456", "john@mayer.com", "+1345678234");
 
         var messages = List.of("The cpf must have 11 numbers without any other characters");
@@ -100,7 +100,7 @@ class PersonControllerTest {
     @Test
     void should_return_bad_request_when_email_validation_fails() throws Exception {
 
-        var request = new CreatePersonRequest("John", "Mayer", "23/05/1983",
+        var request = new PostPersonDto("John", "Mayer", "23/05/1983",
                 "123456", "john@mayer.com", "+1345678234");
 
         var messages = List.of("The cpf must have 11 numbers without any other characters");
@@ -108,9 +108,9 @@ class PersonControllerTest {
         assertBadRequestWhenPostPerson(request, messages);
     }
 
-    void assertBadRequestWhenPostPerson(CreatePersonRequest request, List<String> messages) throws Exception {
+    void assertBadRequestWhenPostPerson(PostPersonDto request, List<String> messages) throws Exception {
 
-        var response = new ErrorResponse("Bad Request", messages);
+        var response = new ExceptionDto("Bad Request", messages);
 
         mockMvc.perform(post("/account-holder/person")
                         .contentType(MediaType.APPLICATION_JSON)
