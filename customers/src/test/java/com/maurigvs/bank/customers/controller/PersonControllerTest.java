@@ -1,8 +1,8 @@
 package com.maurigvs.bank.customers.controller;
 
 import com.maurigvs.bank.customers.mock.Mocks;
-import com.maurigvs.bank.customers.controller.dto.PostPersonDto;
-import com.maurigvs.bank.customers.controller.dto.ExceptionDto;
+import com.maurigvs.bank.customers.controller.dto.PersonRequest;
+import com.maurigvs.bank.customers.controller.dto.ExceptionResponse;
 import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.service.PersonService;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -40,8 +40,10 @@ class PersonControllerTest {
     @Test
     void should_return_created_when_post_person_request() throws Exception {
 
-        var request = Mocks.ofCreatePersonRequest();
-        willDoNothing().given(personService).createPerson(any(PostPersonDto.class));
+        var request = new PersonRequest("86580512180", "John", "Wayne",
+                "28/07/1988", "john@wayne.com", "+5511984833929");
+
+        willDoNothing().given(personService).createPerson(any(PersonRequest.class));
 
         mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,13 +55,16 @@ class PersonControllerTest {
     }
 
     @Test
-    void should_return_bad_request_when_exception_is_thrown() throws Exception {
+    void should_return_bad_request_when_BusinessException_is_thrown() throws Exception {
 
-        var request = Mocks.ofCreatePersonRequest();
-        var response = new ExceptionDto("Bad Request","The account holder already exists");
+        var request = new PersonRequest("86580512180", "John", "Wayne",
+                "28/07/1988", "john@wayne.com", "+5511984833929");
 
-        willThrow(new BusinessException("The account holder already exists"))
-                .given(personService).createPerson(any(PostPersonDto.class));
+        var message = "The account holder already exists";
+        var response = new ExceptionResponse("Bad Request", message);
+
+        willThrow(new BusinessException(message))
+                .given(personService).createPerson(any(PersonRequest.class));
 
         mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,13 +72,15 @@ class PersonControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(Mocks.ofJsonFrom(response)));
+
+        then(personService).should().createPerson(request);
+        then(personService).shouldHaveNoMoreInteractions();
     }
 
     @Test
-    void should_return_bad_request_when_person_validation_fails() throws Exception {
+    void should_return_bad_request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
 
-        var request = new PostPersonDto(null, null, null,
-                null, null, null);
+        var request = new PersonRequest(null, null, null, null, null, null);
 
         var messages = List.of(
                 "birthDate is required",
@@ -83,36 +90,7 @@ class PersonControllerTest {
                 "surname is required",
                 "taxId is required");
 
-        assertBadRequestWhenPostPerson(request, messages);
-    }
-
-    @Test
-    void should_return_bad_request_when_cpf_validation_fails() throws Exception {
-
-        var request = new PostPersonDto("123456",
-                "John", "Mayer", "23/05/1983",
-                 "john@mayer.com", "+1345678234");
-
-        var messages = List.of("taxId must have 11 digits");
-
-        assertBadRequestWhenPostPerson(request, messages);
-    }
-
-    @Test
-    void should_return_bad_request_when_email_validation_fails() throws Exception {
-
-        var request = new PostPersonDto("123456",
-                "John", "Mayer", "23/05/1983",
-                 "john@mayer.com", "+1345678234");
-
-        var messages = List.of("taxId must have 11 digits");
-
-        assertBadRequestWhenPostPerson(request, messages);
-    }
-
-    void assertBadRequestWhenPostPerson(PostPersonDto request, List<String> messages) throws Exception {
-
-        var response = new ExceptionDto("Bad Request", messages);
+        var response = new ExceptionResponse("Bad Request", messages);
 
         mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,5 +101,4 @@ class PersonControllerTest {
 
         then(personService).shouldHaveNoInteractions();
     }
-
 }

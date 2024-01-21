@@ -1,10 +1,9 @@
 package com.maurigvs.bank.customers.service;
 
-import com.maurigvs.bank.customers.mock.Mocks;
-import com.maurigvs.bank.customers.controller.dto.PostPersonDto;
+import com.maurigvs.bank.customers.controller.dto.PersonRequest;
 import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.model.Person;
-import com.maurigvs.bank.customers.repository.PersonRepository;
+import com.maurigvs.bank.customers.repository.CustomerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -18,9 +17,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -33,88 +33,84 @@ class PersonServiceTest {
     PersonService personService;
 
     @MockBean
-    PersonRepository personRepository;
+    CustomerRepository customerRepository;
 
     @Captor
     ArgumentCaptor<Person> personCaptor;
 
     @BeforeEach
     void setUp() {
-        given(personRepository.existsByCpf(anyString())).willReturn(false);
+        given(customerRepository.existsByTaxId(anyString())).willReturn(false);
     }
 
     @Test
     void should_create_person_successfully() throws Exception {
 
-        var request = Mocks.ofCreatePersonRequest();
-
-        var personCreated = new Person(1L, LocalDate.now(), true,
-                "John", "Wayne",
-                LocalDate.of(1988,8,28), "72097237000143",
-                "john@wayne.com", "+5511984833929");
-
-        given(personRepository.save(any(Person.class))).willReturn(personCreated);
+        var request = new PersonRequest("86580512180", "John", "Wayne",
+                "28/07/1988", "john@wayne.com", "+5511984833929");
 
         personService.createPerson(request);
 
-        then(personRepository).should().existsByCpf(request.taxId());
-        then(personRepository).should().save(personCaptor.capture());
-        then(personRepository).shouldHaveNoMoreInteractions();
+        then(customerRepository).should().existsByTaxId(request.taxId());
+        then(customerRepository).should().save(personCaptor.capture());
+        then(customerRepository).shouldHaveNoMoreInteractions();
 
         var person = personCaptor.getValue();
-        assertThat(person.getId()).isNull();
-        assertThat(person.getCustomerSince()).isEqualTo(LocalDate.now());
-        assertThat(person.isEnabled()).isTrue();
-        assertThat(person.getName()).isEqualTo(request.name());
-        assertThat(person.getSurname()).isEqualTo(request.surname());
-        assertThat(person.getBirthDate()).isEqualTo(LocalDate.of(1988,7,28));
-        assertThat(person.getCpf()).isEqualTo(request.taxId());
-        assertThat(person.getEmail()).isEqualTo(request.email());
-        assertThat(person.getPhoneNumber()).isEqualTo(request.phoneNumber());
+        assertNull(person.getId());
+        assertEquals(request.taxId(), person.getTaxId());
+        assertEquals(LocalDate.now(), person.getSince());
+        assertTrue(person.getEnabled());
+        assertEquals(request.name(), person.getName());
+        assertEquals(request.surname(), person.getSurname());
+        assertEquals(LocalDate.of(1988,7,28), person.getBirthDate());
+        assertEquals(request.email(), person.getContactInfo().getEmail());
+        assertEquals(request.phoneNumber(), person.getContactInfo().getPhone());
     }
 
     @Test
-    void should_throw_exception_if_person_underage() {
+    void should_throw_BusinessException_when_person_has_less_than_18_years_of_age() {
 
-        var birthDate = LocalDate.now().minusYears(18).plusDays(1)
+        var birthDate = LocalDate.now()
+                .minusYears(18)
+                .plusDays(1)
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
-        var request = new PostPersonDto("86580512180",
-                "John", "Wayne", birthDate,
-                 "john@wayne.com", "+5511984833929");
+        var request = new PersonRequest("86580512180", "John", "Wayne",
+                birthDate, "john@wayne.com", "+5511984833929");
 
-        assertThatExceptionOfType(BusinessException.class)
-                .isThrownBy(() -> personService.createPerson(request))
-                .withMessage("The account holder must have 18 years of age completed.");
+        assertEquals("The account holder must have 18 years of age completed.",
+                assertThrows(BusinessException.class, () ->
+                        personService.createPerson(request)).getLocalizedMessage());
 
-        then(personRepository).shouldHaveNoInteractions();
+        then(customerRepository).shouldHaveNoInteractions();
     }
 
     @Test
-    void should_throw_exception_if_person_already_exists() {
+    void should_throw_BusinessException_when_person_already_exists() {
 
-        var request = Mocks.ofCreatePersonRequest();
-        given(personRepository.existsByCpf(anyString())).willReturn(true);
+        var request = new PersonRequest("86580512180", "John", "Wayne",
+                "28/07/1988", "john@wayne.com", "+5511984833929");
 
-        assertThatExceptionOfType(BusinessException.class)
-                .isThrownBy(() -> personService.createPerson(request))
-                .withMessage("The account holder already exists");
+        given(customerRepository.existsByTaxId(anyString())).willReturn(true);
 
-        then(personRepository).should().existsByCpf(request.taxId());
-        then(personRepository).shouldHaveNoMoreInteractions();
+        assertEquals("Customer already exists",
+                assertThrows(BusinessException.class, () ->
+                        personService.createPerson(request)).getLocalizedMessage());
+
+        then(customerRepository).should().existsByTaxId(request.taxId());
+        then(customerRepository).shouldHaveNoMoreInteractions();
     }
 
     @Test
-    void should_throw_exception_if_birth_date_is_invalid_when_create_person() {
+    void should_throw_BusinessException_when_birthDate_has_invalid_format() {
 
-        var request = new PostPersonDto("86580512180",
-                "John", "Wayne", "1988-07-28",
-                 "john@wayne.com", "+5511984833929");
+        var request = new PersonRequest("86580512180", "John", "Wayne",
+                "1988-07-28", "john@wayne.com", "+5511984833929");
 
-        assertThatExceptionOfType(BusinessException.class)
-                .isThrownBy(() -> personService.createPerson(request))
-                .withMessage("The date must have the format: dd/MM/yyyy");
+        assertEquals("date must have the format: dd/MM/yyyy",
+                assertThrows(BusinessException.class, () ->
+                        personService.createPerson(request)).getLocalizedMessage());
 
-        then(personRepository).shouldHaveNoInteractions();
+        then(customerRepository).shouldHaveNoInteractions();
     }
 }

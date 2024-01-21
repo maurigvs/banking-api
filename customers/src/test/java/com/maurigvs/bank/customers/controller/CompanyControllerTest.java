@@ -1,7 +1,7 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.controller.dto.ExceptionDto;
-import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
+import com.maurigvs.bank.customers.controller.dto.ExceptionResponse;
+import com.maurigvs.bank.customers.controller.dto.CompanyRequest;
 import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.mock.Mocks;
 import com.maurigvs.bank.customers.service.CompanyService;
@@ -40,8 +40,11 @@ class CompanyControllerTest {
     @Test
     void should_return_created_when_post_company() throws Exception {
 
-        var request = Mocks.ofCreateCompanyRequest();
-        willDoNothing().given(companyService).createCompany(any(PostCompanyDto.class));
+        var request = new CompanyRequest("72097237000143",
+                "Company Services", "Company Services Ltd.",
+                "03/05/2013", "john@wayne.com", "+5511984833929");
+
+        willDoNothing().given(companyService).createCompany(any(CompanyRequest.class));
 
         mockMvc.perform(post("/customer/company")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -55,10 +58,15 @@ class CompanyControllerTest {
     @Test
     void should_return_bad_request_when_BusinessException_is_thrown() throws Exception {
 
-        var request = Mocks.ofCreateCompanyRequest();
+        var request = new CompanyRequest("72097237000143",
+                "Company Services", "Company Services Ltd.",
+                "03/05/2013", "john@wayne.com", "+5511984833929");
+
         var message = "The company needs to be older than 6 months";
-        var response = new ExceptionDto("Bad Request", message);
-        willThrow(new BusinessException(message)).given(companyService).createCompany(any());
+        var response = new ExceptionResponse("Bad Request", message);
+
+        willThrow(new BusinessException(message))
+                .given(companyService).createCompany(any());
 
         mockMvc.perform(post("/customer/company")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -74,8 +82,7 @@ class CompanyControllerTest {
     @Test
     void should_return_bad_request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
 
-        var request = new PostCompanyDto(null, null, null,
-                null, null, null);
+        var request = new CompanyRequest(null, null, null, null, null, null);
 
         var messages = List.of(
                 "businessName is required",
@@ -85,7 +92,7 @@ class CompanyControllerTest {
                 "startDate is required",
                 "taxId is required");
 
-        var response = new ExceptionDto("Bad Request", messages);
+        var response = new ExceptionResponse("Bad Request", messages);
 
         mockMvc.perform(post("/customer/company")
                         .contentType(MediaType.APPLICATION_JSON)

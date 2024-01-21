@@ -2,12 +2,12 @@ package com.maurigvs.bank.customers.controller.dto;
 
 import java.util.List;
 
-public record ExceptionDto(
+public record ExceptionResponse(
         String error,
         List<String> detail
 ) {
 
-    public ExceptionDto(String error, String detail) {
+    public ExceptionResponse(String error, String detail) {
         this(error, List.of(detail));
     }
 }

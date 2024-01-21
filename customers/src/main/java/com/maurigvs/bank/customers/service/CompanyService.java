@@ -1,40 +1,39 @@
 package com.maurigvs.bank.customers.service;
 
-import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
+import com.maurigvs.bank.customers.controller.dto.CompanyRequest;
 import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.model.Company;
-import com.maurigvs.bank.customers.repository.CompanyRepository;
-import lombok.RequiredArgsConstructor;
+import com.maurigvs.bank.customers.model.ContactInfo;
+import com.maurigvs.bank.customers.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 @Service
-@RequiredArgsConstructor
 public class CompanyService extends CustomerService {
 
-    private final CompanyRepository companyRepository;
-
-    public void createCompany(PostCompanyDto request) throws Exception {
-
-        var openingDate = localDateFrom(request.startDate());
-
-        if(companyNotOldEnough(openingDate))
-            throw new BusinessException("The company needs to be older than 6 months");
-
-        if(companyAlreadyExists(request))
-            throw new BusinessException("The account holder already exists");
-
-        companyRepository.save(new Company(null, LocalDate.now(), true,
-                request.legalName(), request.businessName(), localDateFrom(request.startDate()),
-                request.taxId(), request.email(), request.phoneNumber()));
+    public CompanyService(CustomerRepository customerRepository) {
+        super(customerRepository);
     }
 
-    private boolean companyNotOldEnough(LocalDate openingDate) {
-        return openingDate.isAfter(LocalDate.now().minusMonths(6));
+    public void createCompany(CompanyRequest request) throws BusinessException {
+
+        var startDate = parseLocalDate(request.startDate());
+
+        if(isNewerThanSixMonths(startDate))
+            throw new BusinessException("The company need to be older than 6 months");
+
+        if(existsByTaxId(request.taxId()))
+            throw new BusinessException("Customer already exists");
+
+        createCustomer(
+            new Company(null, request.taxId(), LocalDate.now(), true,
+                    new ContactInfo(request.email(), request.phoneNumber()),
+                    request.businessName(), request.legalName(), startDate)
+        );
     }
 
-    private boolean companyAlreadyExists(PostCompanyDto request) {
-        return companyRepository.existsByCnpj(request.taxId());
+    private boolean isNewerThanSixMonths(LocalDate localDate) {
+        return localDate.isAfter(LocalDate.now().minusMonths(6));
     }
 }

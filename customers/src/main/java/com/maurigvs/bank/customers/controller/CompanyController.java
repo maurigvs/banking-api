@@ -1,6 +1,7 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.controller.dto.PostCompanyDto;
+import com.maurigvs.bank.customers.controller.dto.CompanyRequest;
+import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class CompanyController {
 
     @PostMapping("/company")
     @ResponseStatus(HttpStatus.CREATED)
-    public void postCompany(@RequestBody @Valid PostCompanyDto request) throws Exception {
+    public void postCompany(@RequestBody @Valid CompanyRequest request) throws BusinessException {
         companyService.createCompany(request);
     }
 }

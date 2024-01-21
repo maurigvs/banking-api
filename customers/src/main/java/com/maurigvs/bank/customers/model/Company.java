@@ -1,40 +1,27 @@
 package com.maurigvs.bank.customers.model;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-@PrimaryKeyJoinColumn(name = "company_id")
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@PrimaryKeyJoinColumn(name = "customer_id")
 @Getter
-public class Company extends Customer {
-
-    private String legalName;
+public class Company extends Customer implements Serializable {
 
     private String businessName;
+    private String legalName;
+    private LocalDate startDate;
 
-    private LocalDate openingDate;
+    public Company(Long id, String taxId, LocalDate since, Boolean enabled, ContactInfo contactInfo,
+                   String businessName, String legalName, LocalDate startDate) {
 
-    @Column(unique = true)
-    private String cnpj;
-
-    private String email;
-
-    private String phoneNumber;
-
-    public Company(Long id, LocalDate customerSince, boolean enabled, String legalName, String businessName, LocalDate openingDate, String cnpj, String email, String phoneNumber) {
-        super(id, customerSince, enabled);
-        this.legalName = legalName;
+        super(id, taxId, since, enabled, contactInfo);
         this.businessName = businessName;
-        this.openingDate = openingDate;
-        this.cnpj = cnpj;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+        this.legalName = legalName;
+        this.startDate = startDate;
     }
 }

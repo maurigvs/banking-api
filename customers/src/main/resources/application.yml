@@ -4,7 +4,7 @@ server:
   port: 8081
 spring:
   datasource:
-    url: jdbc:h2:mem:account-holders-db
+    url: jdbc:h2:mem:customers-db
     username: app
     password: 'app'
   h2:

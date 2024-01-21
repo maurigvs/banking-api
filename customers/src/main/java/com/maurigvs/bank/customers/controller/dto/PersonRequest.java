@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record PostPersonDto(
+public record PersonRequest(
 
         @NotBlank(message = "taxId is required")
         @Size(min = 11, max = 11, message = "taxId must have 11 digits")
