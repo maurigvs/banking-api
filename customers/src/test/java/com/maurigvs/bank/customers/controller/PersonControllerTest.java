@@ -1,9 +1,10 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.mock.Mocks;
-import com.maurigvs.bank.customers.controller.dto.PersonRequest;
-import com.maurigvs.bank.customers.controller.dto.ExceptionResponse;
+import com.maurigvs.bank.customers.dto.ExceptionResponse;
+import com.maurigvs.bank.customers.dto.PersonRequest;
 import com.maurigvs.bank.customers.exception.BusinessException;
+import com.maurigvs.bank.customers.mock.Mocks;
+import com.maurigvs.bank.customers.model.Person;
 import com.maurigvs.bank.customers.service.PersonService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -18,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
@@ -32,10 +32,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PersonControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    PersonService personService;
+    private PersonService personService;
 
     @Test
     void should_return_created_when_post_person_request() throws Exception {
@@ -43,14 +43,14 @@ class PersonControllerTest {
         var request = new PersonRequest("86580512180", "John", "Wayne",
                 "28/07/1988", "john@wayne.com", "+5511984833929");
 
-        willDoNothing().given(personService).createPerson(any(PersonRequest.class));
+        willDoNothing().given(personService).create(any(Person.class));
 
         mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isCreated());
 
-        then(personService).should().createPerson(eq(request));
+        then(personService).should().create(any(Person.class));
         then(personService).shouldHaveNoMoreInteractions();
     }
 
@@ -60,11 +60,10 @@ class PersonControllerTest {
         var request = new PersonRequest("86580512180", "John", "Wayne",
                 "28/07/1988", "john@wayne.com", "+5511984833929");
 
-        var message = "The account holder already exists";
+        var message = "business exception message";
         var response = new ExceptionResponse("Bad Request", message);
 
-        willThrow(new BusinessException(message))
-                .given(personService).createPerson(any(PersonRequest.class));
+        willThrow(new BusinessException(message)).given(personService).create(any(Person.class));
 
         mockMvc.perform(post("/customer/person")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,14 +72,16 @@ class PersonControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(Mocks.ofJsonFrom(response)));
 
-        then(personService).should().createPerson(request);
+        then(personService).should().create(any(Person.class));
         then(personService).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void should_return_bad_request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
 
-        var request = new PersonRequest(null, null, null, null, null, null);
+        var request = new PersonRequest(
+                null, null, null,
+                null, null, null);
 
         var messages = List.of(
                 "birthDate is required",

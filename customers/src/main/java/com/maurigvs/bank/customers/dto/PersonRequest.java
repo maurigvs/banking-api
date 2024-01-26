@@ -1,4 +1,4 @@
-package com.maurigvs.bank.customers.controller.dto;
+package com.maurigvs.bank.customers.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

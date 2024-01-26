@@ -1,6 +1,6 @@
 package com.maurigvs.bank.customers.exception;
 
-import com.maurigvs.bank.customers.controller.dto.ExceptionResponse;
+import com.maurigvs.bank.customers.dto.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

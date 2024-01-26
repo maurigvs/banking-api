@@ -1,9 +1,10 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.controller.dto.ExceptionResponse;
-import com.maurigvs.bank.customers.controller.dto.CompanyRequest;
+import com.maurigvs.bank.customers.dto.CompanyRequest;
+import com.maurigvs.bank.customers.dto.ExceptionResponse;
 import com.maurigvs.bank.customers.exception.BusinessException;
 import com.maurigvs.bank.customers.mock.Mocks;
+import com.maurigvs.bank.customers.model.Company;
 import com.maurigvs.bank.customers.service.CompanyService;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -18,9 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -32,10 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CompanyControllerTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @MockBean
-    CompanyService companyService;
+    private CompanyService companyService;
 
     @Test
     void should_return_created_when_post_company() throws Exception {
@@ -44,14 +43,12 @@ class CompanyControllerTest {
                 "Company Services", "Company Services Ltd.",
                 "03/05/2013", "john@wayne.com", "+5511984833929");
 
-        willDoNothing().given(companyService).createCompany(any(CompanyRequest.class));
-
         mockMvc.perform(post("/customer/company")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(Mocks.ofJsonFrom(request)))
                 .andExpect(status().isCreated());
 
-        then(companyService).should().createCompany(eq(request));
+        then(companyService).should().create(any(Company.class));
         then(companyService).shouldHaveNoMoreInteractions();
     }
 
@@ -62,11 +59,10 @@ class CompanyControllerTest {
                 "Company Services", "Company Services Ltd.",
                 "03/05/2013", "john@wayne.com", "+5511984833929");
 
-        var message = "The company needs to be older than 6 months";
+        var message = "business exception message";
         var response = new ExceptionResponse("Bad Request", message);
 
-        willThrow(new BusinessException(message))
-                .given(companyService).createCompany(any());
+        willThrow(new BusinessException(message)).given(companyService).create(any());
 
         mockMvc.perform(post("/customer/company")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -75,14 +71,16 @@ class CompanyControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(Mocks.ofJsonFrom(response), true));
 
-        then(companyService).should().createCompany(request);
+        then(companyService).should().create(any(Company.class));
         then(companyService).shouldHaveNoMoreInteractions();
     }
 
     @Test
     void should_return_bad_request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
 
-        var request = new CompanyRequest(null, null, null, null, null, null);
+        var request = new CompanyRequest(
+                null, null, null,
+                null, null, null);
 
         var messages = List.of(
                 "businessName is required",

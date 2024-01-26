@@ -1,39 +1,33 @@
 package com.maurigvs.bank.customers.service;
 
-import com.maurigvs.bank.customers.controller.dto.PersonRequest;
 import com.maurigvs.bank.customers.exception.BusinessException;
-import com.maurigvs.bank.customers.model.ContactInfo;
 import com.maurigvs.bank.customers.model.Person;
 import com.maurigvs.bank.customers.repository.CustomerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 @Service
-public class PersonService extends CustomerService {
+@RequiredArgsConstructor
+public class PersonService implements CustomerService<Person> {
 
-    public PersonService(CustomerRepository customerRepository) {
-        super(customerRepository);
+    private final CustomerRepository repository;
+
+    @Override
+    public void create(Person person) throws BusinessException {
+        validateBirthDate(person.getBirthDate());
+        validateAlreadyExists(person.getTaxId());
+        repository.save(person);
     }
 
-    public void createPerson(PersonRequest request) throws BusinessException {
-
-        var birthDate = parseLocalDate(request.birthDate());
-
-        if(isAgeLessThanEighteenYears(birthDate))
+    private void validateBirthDate(LocalDate birthDate) throws BusinessException {
+        if(birthDate.isAfter(LocalDate.now().minusYears(18)))
             throw new BusinessException("The account holder must have 18 years of age completed.");
-
-        if(existsByTaxId(request.taxId()))
-            throw new BusinessException("Customer already exists");
-
-        createCustomer(
-            new Person(null, request.taxId(), LocalDate.now(), true,
-                    new ContactInfo(request.email(), request.phoneNumber()),
-                    request.name(), request.surname(), birthDate)
-        );
     }
 
-    private boolean isAgeLessThanEighteenYears(LocalDate localDate) {
-        return localDate.isAfter(LocalDate.now().minusYears(18));
+    private void validateAlreadyExists(String taxId) throws BusinessException {
+        if(repository.existsByTaxId(taxId))
+            throw new BusinessException("Customer already exists");
     }
 }

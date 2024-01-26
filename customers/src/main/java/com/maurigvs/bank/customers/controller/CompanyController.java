@@ -1,7 +1,8 @@
 package com.maurigvs.bank.customers.controller;
 
-import com.maurigvs.bank.customers.controller.dto.CompanyRequest;
+import com.maurigvs.bank.customers.dto.CompanyRequest;
 import com.maurigvs.bank.customers.exception.BusinessException;
+import com.maurigvs.bank.customers.mapper.CompanyMapper;
 import com.maurigvs.bank.customers.service.CompanyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +14,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/customer/company")
 @RequiredArgsConstructor
 public class CompanyController {
 
-    private final CompanyService companyService;
+    private final CompanyService service;
 
-    @PostMapping("/company")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void postCompany(@RequestBody @Valid CompanyRequest request) throws BusinessException {
-        companyService.createCompany(request);
+        var company = new CompanyMapper().apply(request);
+        service.create(company);
     }
 }
