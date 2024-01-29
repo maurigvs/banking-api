@@ -4,29 +4,29 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.io.Serializable;
-import java.time.LocalDate;
-
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
 @Getter
-public abstract class Account implements Serializable {
+public class Operator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String taxId;
+    private String name;
 
-    private LocalDate openingDate;
+    private String email;
 
-    private Double balance;
+    private String phone;
 
     private Integer pinCode;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private CommercialAccount account;
 }

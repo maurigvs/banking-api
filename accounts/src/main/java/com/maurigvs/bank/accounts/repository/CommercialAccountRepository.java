@@ -1,10 +1,9 @@
 package com.maurigvs.bank.accounts.repository;
 
-import com.maurigvs.bank.accounts.model.Account;
+import com.maurigvs.bank.accounts.model.CommercialAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AccountRepository extends JpaRepository<Account, Long> {
-
+public interface CommercialAccountRepository extends JpaRepository<CommercialAccount, Long> {
 }
