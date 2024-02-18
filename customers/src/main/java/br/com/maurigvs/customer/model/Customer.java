@@ -1,5 +1,6 @@
 package br.com.maurigvs.customer.model;
 
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,14 +18,15 @@ public abstract class Customer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String emailAddress;
-    private String phoneNumber;
+
+    @Embedded
+    private ContactInfo contactInfo;
+
     private LocalDate createdAt;
 
-    public Customer(Long id, String emailAddress, String phoneNumber, LocalDate createdAt) {
+    Customer(Long id, ContactInfo contactInfo, LocalDate createdAt) {
         this.id = id;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
+        this.contactInfo = contactInfo;
         this.createdAt = createdAt;
     }
 
@@ -35,12 +37,8 @@ public abstract class Customer implements Serializable {
         return id;
     }
 
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public ContactInfo getContactInfo() {
+        return contactInfo;
     }
 
     public LocalDate getCreatedAt() {

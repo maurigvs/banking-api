@@ -1,6 +1,7 @@
 package br.com.maurigvs.customer.service;
 
 import br.com.maurigvs.customer.model.Company;
+import br.com.maurigvs.customer.model.ContactInfo;
 import br.com.maurigvs.customer.repository.CompanyRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -32,8 +33,7 @@ class CompanyServiceImplTest {
                 "Contoso Services Inc.",
                 "29382687000159",
                 LocalDate.of(2004,4,7),
-                "finance@contoso.com",
-                "+351654358130",
+                new ContactInfo("finance@contoso.com", "+351654358130"),
                 LocalDate.now());
 
         companyService.create(company);

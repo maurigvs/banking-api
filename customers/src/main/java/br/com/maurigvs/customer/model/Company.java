@@ -15,8 +15,8 @@ public class Company extends Customer implements Serializable {
     private String cnpj;
     private LocalDate startDate;
 
-    public Company(Long id, String businessName, String legalName, String cnpj, LocalDate startDate, String emailAddress, String phoneNumber, LocalDate createdAt) {
-        super(id, emailAddress, phoneNumber, createdAt);
+    public Company(Long id, String businessName, String legalName, String cnpj, LocalDate startDate, ContactInfo contactInfo, LocalDate createdAt) {
+        super(id, contactInfo, createdAt);
         this.businessName = businessName;
         this.legalName = legalName;
         this.cnpj = cnpj;

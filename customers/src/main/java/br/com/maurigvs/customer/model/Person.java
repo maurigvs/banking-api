@@ -15,8 +15,8 @@ public class Person extends Customer implements Serializable {
     private String cpf;
     private LocalDate birthDate;
 
-    public Person(Long id, String name, String surname, String cpf, LocalDate birthDate, String emailAddress, String phoneNumber, LocalDate createdAt) {
-        super(id, emailAddress, phoneNumber, createdAt);
+    public Person(Long id, String name, String surname, String cpf, LocalDate birthDate, ContactInfo contactInfo, LocalDate createdAt) {
+        super(id, contactInfo, createdAt);
         this.name = name;
         this.surname = surname;
         this.cpf = cpf;

@@ -32,8 +32,8 @@ class PersonMapperTest {
         assertEquals(request.surname(), result.getSurname());
         assertEquals(request.cpf(), result.getCpf());
         assertEquals(birthDate, result.getBirthDate());
-        assertEquals(request.emailAddress(), result.getEmailAddress());
-        assertEquals(request.phoneNumber(), result.getPhoneNumber());
+        assertEquals(request.emailAddress(), result.getContactInfo().getEmailAddress());
+        assertEquals(request.phoneNumber(), result.getContactInfo().getPhoneNumber());
         assertEquals(createdAt, result.getCreatedAt());
     }
 }

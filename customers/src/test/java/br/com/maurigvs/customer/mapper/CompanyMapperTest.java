@@ -31,8 +31,8 @@ class CompanyMapperTest {
         assertEquals(request.legalName(), result.getLegalName());
         assertEquals(request.cnpj(), result.getCnpj());
         assertEquals(startDate, result.getStartDate());
-        assertEquals(request.emailAddress(), result.getEmailAddress());
-        assertEquals(request.phoneNumber(), result.getPhoneNumber());
+        assertEquals(request.emailAddress(), result.getContactInfo().getEmailAddress());
+        assertEquals(request.phoneNumber(), result.getContactInfo().getPhoneNumber());
         assertEquals(createdAt, result.getCreatedAt());
     }
 }

@@ -1,5 +1,6 @@
 package br.com.maurigvs.customer.service;
 
+import br.com.maurigvs.customer.model.ContactInfo;
 import br.com.maurigvs.customer.model.Person;
 import br.com.maurigvs.customer.repository.PersonRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -32,8 +33,7 @@ class PersonServiceImplTest {
                 "Snow",
                 "63592564528",
                 LocalDate.of(1988,7,28),
-                "john.snow@gmail.com",
-                "+351654358130",
+                new ContactInfo("john.snow@gmail.com", "+351654358130"),
                 LocalDate.now());
 
         personService.create(person);
