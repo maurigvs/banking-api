@@ -17,4 +17,9 @@ public class CompanyServiceImpl implements CompanyService {
     public void create(Company company) {
         repository.save(company);
     }
+
+    @Override
+    public Company findByTaxId(String taxId) {
+        return repository.findByCnpj(taxId).orElseThrow();
+    }
 }

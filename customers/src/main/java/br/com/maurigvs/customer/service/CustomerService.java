@@ -5,4 +5,6 @@ import br.com.maurigvs.customer.model.Customer;
 interface CustomerService<T extends Customer> {
 
     void create(T t);
+
+    T findByTaxId(String taxId);
 }

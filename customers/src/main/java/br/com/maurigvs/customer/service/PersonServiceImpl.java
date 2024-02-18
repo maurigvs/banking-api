@@ -17,4 +17,9 @@ public class PersonServiceImpl implements PersonService {
     public void create(Person person) {
         repository.save(person);
     }
+
+    @Override
+    public Person findByTaxId(String taxId) {
+        return repository.findByCpf(taxId).orElseThrow();
+    }
 }
