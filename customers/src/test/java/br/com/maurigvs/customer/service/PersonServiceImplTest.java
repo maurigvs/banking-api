@@ -21,10 +21,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 class PersonServiceImplTest {
 
     @Autowired
-    private PersonService personService;
+    private PersonService service;
 
     @MockBean
-    private PersonRepository personRepository;
+    private PersonRepository repository;
 
     @Test
     void should_create_person() {
@@ -36,9 +36,9 @@ class PersonServiceImplTest {
                 new ContactInfo("john.snow@gmail.com", "+351654358130"),
                 LocalDate.now());
 
-        personService.create(person);
+        service.create(person);
 
-        verify(personRepository, times(1)).save(person);
-        verifyNoMoreInteractions(personRepository);
+        verify(repository, times(1)).save(person);
+        verifyNoMoreInteractions(repository);
     }
 }

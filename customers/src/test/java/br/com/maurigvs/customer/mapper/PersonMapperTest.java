@@ -22,6 +22,7 @@ class PersonMapperTest {
                 "28/07/1988",
                 "john.snow@gmail.com",
                 "+351654358130");
+
         var birthDate = LocalDate.of(1988,7,28);
         var createdAt = LocalDate.now();
 

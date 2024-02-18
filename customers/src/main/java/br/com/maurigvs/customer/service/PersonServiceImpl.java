@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class PersonServiceImpl implements PersonService {
 
-    private final PersonRepository personRepository;
+    private final PersonRepository repository;
 
-    public PersonServiceImpl(PersonRepository personRepository) {
-        this.personRepository = personRepository;
+    public PersonServiceImpl(PersonRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public void create(Person person) {
-        personRepository.save(person);
+        repository.save(person);
     }
 }

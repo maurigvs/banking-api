@@ -29,12 +29,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PersonControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mvc;
 
     @MockBean
-    private PersonService personService;
+    private PersonService service;
 
-    private static final String URL_TEMPLATE = "/person";
+    private static final String URL_PATH = "/person";
 
     @Test
     void should_return_Created_when_post_person_successfully() throws Exception {
@@ -48,13 +48,13 @@ class PersonControllerTest {
 
         var jsonRequest = Utils.ofJson(personRequest);
 
-        mockMvc.perform(post(URL_TEMPLATE)
+        mvc.perform(post(URL_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated());
 
-        verify(personService, times(1)).create(any());
-        verifyNoMoreInteractions(personService);
+        verify(service, times(1)).create(any());
+        verifyNoMoreInteractions(service);
     }
 
     @Test
@@ -74,14 +74,14 @@ class PersonControllerTest {
         var jsonRequest = Utils.ofJson(personRequest);
         var jsonResponse = Utils.ofJson(errorResponse);
 
-        mockMvc.perform(post(URL_TEMPLATE)
+        mvc.perform(post(URL_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(jsonResponse));
 
-        verifyNoInteractions(personService);
+        verifyNoInteractions(service);
     }
 
     @Test
@@ -101,13 +101,13 @@ class PersonControllerTest {
         var jsonRequest = Utils.ofJson(personRequest);
         var jsonResponse = Utils.ofJson(errorResponse);
 
-        mockMvc.perform(post(URL_TEMPLATE)
+        mvc.perform(post(URL_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(jsonResponse));
 
-        verifyNoInteractions(personService);
+        verifyNoInteractions(service);
     }
 }

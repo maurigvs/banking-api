@@ -21,6 +21,7 @@ class CompanyMapperTest {
                 "07/04/2004",
                 "finance@contoso.com",
                 "+351654358130");
+
         var startDate = LocalDate.of(2004,4,7);
         var createdAt = LocalDate.now();
 

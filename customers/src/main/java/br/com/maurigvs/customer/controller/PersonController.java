@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/person")
 public class PersonController {
 
-    private final PersonService personService;
+    private final PersonService service;
 
-    public PersonController(PersonService personService) {
-        this.personService = personService;
+    public PersonController(PersonService service) {
+        this.service = service;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void postPerson(@RequestBody @Valid PersonRequest request){
         var person = new PersonMapper().apply(request);
-        personService.create(person);
+        service.create(person);
     }
 }

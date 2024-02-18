@@ -21,10 +21,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 class CompanyServiceImplTest {
 
     @Autowired
-    private CompanyService companyService;
+    private CompanyService service;
 
     @MockBean
-    private CompanyRepository companyRepository;
+    private CompanyRepository repository;
 
     @Test
     void should_create_company() {
@@ -36,9 +36,9 @@ class CompanyServiceImplTest {
                 new ContactInfo("finance@contoso.com", "+351654358130"),
                 LocalDate.now());
 
-        companyService.create(company);
+        service.create(company);
 
-        verify(companyRepository, times(1)).save(company);
-        verifyNoMoreInteractions(companyRepository);
+        verify(repository, times(1)).save(company);
+        verifyNoMoreInteractions(repository);
     }
 }

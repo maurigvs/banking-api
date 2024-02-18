@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
-    private final CompanyRepository companyRepository;
+    private final CompanyRepository repository;
 
-    public CompanyServiceImpl(CompanyRepository companyRepository) {
-        this.companyRepository = companyRepository;
+    public CompanyServiceImpl(CompanyRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public void create(Company company) {
-        companyRepository.save(company);
+        repository.save(company);
     }
 }

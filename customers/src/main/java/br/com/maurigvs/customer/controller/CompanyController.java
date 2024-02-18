@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/company")
 public class CompanyController {
 
-    private final CompanyService companyService;
+    private final CompanyService service;
 
-    public CompanyController(CompanyService companyService) {
-        this.companyService = companyService;
+    public CompanyController(CompanyService service) {
+        this.service = service;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void postCompany(@RequestBody @Valid CompanyRequest request){
         var company = new CompanyMapper().apply(request);
-        companyService.create(company);
+        service.create(company);
     }
 }

@@ -27,12 +27,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CompanyControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private MockMvc mvc;
 
     @MockBean
-    private CompanyService companyService;
+    private CompanyService service;
 
-    private static final String URL_TEMPLATE = "/company";
+    private static final String URL_PATH = "/company";
 
     @Test
     void should_return_Created_when_post_company_successfully() throws Exception {
@@ -46,12 +46,12 @@ class CompanyControllerTest {
 
         var jsonRequest = Utils.ofJson(companyRequest);
 
-        mockMvc.perform(post(URL_TEMPLATE)
+        mvc.perform(post(URL_PATH)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonRequest))
                 .andExpect(status().isCreated());
 
-        verify(companyService, times(1)).create(any(Company.class));
-        verifyNoMoreInteractions(companyService);
+        verify(service, times(1)).create(any(Company.class));
+        verifyNoMoreInteractions(service);
     }
 }
