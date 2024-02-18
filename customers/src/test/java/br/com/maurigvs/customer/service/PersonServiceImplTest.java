@@ -33,7 +33,8 @@ class PersonServiceImplTest {
                 "63592564528",
                 LocalDate.of(1988,7,28),
                 "john.snow@gmail.com",
-                "+351654358130");
+                "+351654358130",
+                LocalDate.now());
 
         personService.create(person);
 

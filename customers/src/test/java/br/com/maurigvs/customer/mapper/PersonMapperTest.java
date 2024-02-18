@@ -23,6 +23,7 @@ class PersonMapperTest {
                 "john.snow@gmail.com",
                 "+351654358130");
         var birthDate = LocalDate.of(1988,7,28);
+        var createdAt = LocalDate.now();
 
         var result = new PersonMapper().apply(request);
 
@@ -33,5 +34,6 @@ class PersonMapperTest {
         assertEquals(birthDate, result.getBirthDate());
         assertEquals(request.emailAddress(), result.getEmailAddress());
         assertEquals(request.phoneNumber(), result.getPhoneNumber());
+        assertEquals(createdAt, result.getCreatedAt());
     }
 }

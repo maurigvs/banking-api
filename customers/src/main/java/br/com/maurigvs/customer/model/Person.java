@@ -1,41 +1,29 @@
 package br.com.maurigvs.customer.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
-public class Person implements Serializable {
+@PrimaryKeyJoinColumn(name = "customer_id")
+public class Person extends Customer implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String name;
     private String surname;
     private String cpf;
     private LocalDate birthDate;
-    private String emailAddress;
-    private String phoneNumber;
 
-    public Person(Long id, String name, String surname, String cpf, LocalDate birthDate, String emailAddress, String phoneNumber) {
-        this.id = id;
+    public Person(Long id, String name, String surname, String cpf, LocalDate birthDate, String emailAddress, String phoneNumber, LocalDate createdAt) {
+        super(id, emailAddress, phoneNumber, createdAt);
         this.name = name;
         this.surname = surname;
         this.cpf = cpf;
         this.birthDate = birthDate;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
     }
 
     protected Person() {
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -52,13 +40,5 @@ public class Person implements Serializable {
 
     public LocalDate getBirthDate() {
         return birthDate;
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
     }
 }

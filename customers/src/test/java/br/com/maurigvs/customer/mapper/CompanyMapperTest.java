@@ -22,6 +22,7 @@ class CompanyMapperTest {
                 "finance@contoso.com",
                 "+351654358130");
         var startDate = LocalDate.of(2004,4,7);
+        var createdAt = LocalDate.now();
 
         var result = new CompanyMapper().apply(request);
 
@@ -32,5 +33,6 @@ class CompanyMapperTest {
         assertEquals(startDate, result.getStartDate());
         assertEquals(request.emailAddress(), result.getEmailAddress());
         assertEquals(request.phoneNumber(), result.getPhoneNumber());
+        assertEquals(createdAt, result.getCreatedAt());
     }
 }

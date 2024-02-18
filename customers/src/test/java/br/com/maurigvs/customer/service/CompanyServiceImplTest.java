@@ -33,7 +33,8 @@ class CompanyServiceImplTest {
                 "29382687000159",
                 LocalDate.of(2004,4,7),
                 "finance@contoso.com",
-                "+351654358130");
+                "+351654358130",
+                LocalDate.now());
 
         companyService.create(company);
 
