@@ -1,13 +1,12 @@
-package com.maurigvs.bank.customers;
+package br.com.maurigvs.customer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CustomersApplication {
+public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(CustomersApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
-
 }
