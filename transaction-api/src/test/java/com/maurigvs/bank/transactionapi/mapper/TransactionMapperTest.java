@@ -17,7 +17,7 @@ class TransactionMapperTest {
     @Test
     void should_return_Transaction_given_an_TransactionRequest() {
         var customer = new Customer(1L, "63592564528");
-        var account = new Account(1L, customer, 0.0);
+        var account = new Account(1L, 0.0);
 
         var transactionRequest = new TransactionRequest(
                 "63592564528",
@@ -26,9 +26,10 @@ class TransactionMapperTest {
                 "Initial deposit",
                 100.00);
 
-        var result = new TransactionMapper(account).apply(transactionRequest);
+        var result = new TransactionMapper(customer, account).apply(transactionRequest);
 
         assertNull(result.getId());
+        assertSame(customer, result.getCustomer());
         assertSame(account, result.getAccount());
         assertEquals(transactionRequest.operation(), result.getOperation());
         assertEquals(transactionRequest.description(), result.getDescription());

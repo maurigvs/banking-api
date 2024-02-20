@@ -1,7 +1,6 @@
 package com.maurigvs.bank.transactionapi.service.impl;
 
 import com.maurigvs.bank.transactionapi.model.Account;
-import com.maurigvs.bank.transactionapi.model.Customer;
 import com.maurigvs.bank.transactionapi.repository.AccountRepository;
 import com.maurigvs.bank.transactionapi.service.AccountService;
 import org.springframework.stereotype.Service;
@@ -16,10 +15,9 @@ class AccountServiceImpl implements AccountService {
         this.repository = repository;
     }
 
-    // TODO Replace implementation
     @Override
     public Account findById(Long id) {
-        var account = new Account(id, new Customer(1L, "cpf"), 0.00);
+        var account = new Account(id, 0.00);
         return repository.save(account);
     }
 }

@@ -12,6 +12,10 @@ public class Transaction {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
 
@@ -27,9 +31,9 @@ public class Transaction {
     @Transient
     private boolean verified;
 
-    public Transaction(Long id, Account account, String operation, String description,
-                       Double amount, ZonedDateTime createdAt, boolean verified) {
-        this.id = id;;
+    public Transaction(Long id, Customer customer, Account account, String operation, String description, Double amount, ZonedDateTime createdAt, boolean verified) {
+        this.id = id;
+        this.customer = customer;
         this.account = account;
         this.operation = operation;
         this.description = description;
@@ -40,6 +44,10 @@ public class Transaction {
 
     public Long getId() {
         return id;
+    }
+
+    public Customer getCustomer() {
+        return customer;
     }
 
     public Account getAccount() {

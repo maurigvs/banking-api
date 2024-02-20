@@ -31,10 +31,9 @@ class TransactionServiceImplTest {
 
     @Test
     void should_create_transaction() {
-        var customer = new Customer(1L, "63592564528");
-        var account = new Account(1L, customer, 0.0);
         var transaction = new Transaction(null,
-                account,
+                new Customer(1L, "63592564528"),
+                new Account(1L, 0.0),
                 "CREDIT",
                 "Initial deposit",
                 100.00,
