@@ -2,6 +2,7 @@ package com.maurigvs.bank.accountapi.controller;
 
 import com.maurigvs.bank.accountapi.controller.util.Utils;
 import com.maurigvs.bank.accountapi.dto.ConsumerRequest;
+import com.maurigvs.bank.accountapi.dto.ErrorResponse;
 import com.maurigvs.bank.accountapi.model.Consumer;
 import com.maurigvs.bank.accountapi.service.ConsumerService;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -16,8 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ConsumerController.class)
@@ -45,5 +48,23 @@ class ConsumerControllerTest {
 
         verify(service).create(any(Consumer.class));
         verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    void should_return_Bad_Request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
+        var consumerRequest = new ConsumerRequest("", 123456);
+        var errorResponse = new ErrorResponse("Bad Request",
+                "customerCpf size must be between 11 and 11");
+        var jsonRequest = Utils.ofJson(consumerRequest);
+        var jsonResponse = Utils.ofJson(errorResponse);
+
+        mvc.perform(post(URL_PATH)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequest))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(jsonResponse));
+
+        verifyNoInteractions(service);
     }
 }
