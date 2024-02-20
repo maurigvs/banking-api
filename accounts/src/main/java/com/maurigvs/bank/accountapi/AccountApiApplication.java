@@ -1,13 +1,13 @@
-package com.maurigvs.bank.accounts;
+package com.maurigvs.bank.accountapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AccountsApplication {
+public class AccountApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AccountsApplication.class, args);
+        SpringApplication.run(AccountApiApplication.class, args);
     }
 
 }

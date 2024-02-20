@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /bank
+    context-path: /bank/v1/account
   port: 8082
 spring:
   datasource:
