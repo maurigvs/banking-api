@@ -3,6 +3,8 @@ package com.maurigvs.bank.transactionapi.controller;
 import com.maurigvs.bank.transactionapi.dto.ErrorResponse;
 import com.maurigvs.bank.transactionapi.dto.TransactionRequest;
 import com.maurigvs.bank.transactionapi.model.Transaction;
+import com.maurigvs.bank.transactionapi.service.AccountService;
+import com.maurigvs.bank.transactionapi.service.CustomerService;
 import com.maurigvs.bank.transactionapi.service.TransactionService;
 import com.maurigvs.bank.transactionapi.util.Utils;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -14,7 +16,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -31,7 +32,15 @@ class TransactionControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private TransactionService service;
+    private TransactionService transactionService;
+
+    // TODO Update current tests
+    @MockBean
+    private CustomerService customerService;
+
+    // TODO Update current tests
+    @MockBean
+    private AccountService accountService;
 
     private static final String URL_PATH = "/transaction";
 
@@ -50,8 +59,8 @@ class TransactionControllerTest {
                         .content(jsonRequest))
                 .andExpect(status().isCreated());
 
-        verify(service).create(any(Transaction.class));
-        verifyNoMoreInteractions(service);
+        verify(transactionService).create(any(Transaction.class));
+        verifyNoMoreInteractions(transactionService);
     }
 
     @Test
@@ -62,7 +71,9 @@ class TransactionControllerTest {
                 "",
                 "Initial deposit",
                 100.00);
-        var errorResponse = new ErrorResponse("Bad Request", "operation must not be blank");
+        var errorResponse = new ErrorResponse(
+                "Bad Request",
+                "operation must not be blank");
         var jsonRequest = Utils.ofJson(transactionRequest);
         var jsonResponse = Utils.ofJson(errorResponse);
 
@@ -73,6 +84,6 @@ class TransactionControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(jsonResponse));
 
-        verifyNoInteractions(service);
+        verifyNoInteractions(transactionService);
     }
 }

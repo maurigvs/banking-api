@@ -1,9 +1,6 @@
 package com.maurigvs.bank.transactionapi.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.ZonedDateTime;
 
@@ -13,33 +10,48 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String customerCpf;
-    private Long accountNumber;
-    private String operation;
-    private String description;
-    private Double amount;
-    private ZonedDateTime dateTime;
 
-    public Transaction(Long id, String customerCpf, Long accountNumber, String operation, String description, Double amount, ZonedDateTime dateTime) {
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
+
+    // TODO Convert to Enum DEBIT or CREDIT
+    private String operation;
+
+    private String description;
+
+    private Double amount;
+
+    private ZonedDateTime createdAt;
+
+    @Transient
+    private boolean verified;
+
+    public Transaction(Long id, Customer customer, Account account, String operation, String description, Double amount, ZonedDateTime createdAt, boolean verified) {
         this.id = id;
-        this.customerCpf = customerCpf;
-        this.accountNumber = accountNumber;
+        this.customer = customer;
+        this.account = account;
         this.operation = operation;
         this.description = description;
         this.amount = amount;
-        this.dateTime = dateTime;
+        this.createdAt = createdAt;
+        this.verified = verified;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getCustomerCpf() {
-        return customerCpf;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public Long getAccountNumber() {
-        return accountNumber;
+    public Account getAccount() {
+        return account;
     }
 
     public String getOperation() {
@@ -54,7 +66,15 @@ public class Transaction {
         return amount;
     }
 
-    public ZonedDateTime getDateTime() {
-        return dateTime;
+    public ZonedDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }

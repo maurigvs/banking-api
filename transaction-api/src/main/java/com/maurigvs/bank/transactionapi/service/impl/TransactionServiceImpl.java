@@ -1,7 +1,8 @@
-package com.maurigvs.bank.transactionapi.service;
+package com.maurigvs.bank.transactionapi.service.impl;
 
 import com.maurigvs.bank.transactionapi.model.Transaction;
 import com.maurigvs.bank.transactionapi.repository.TransactionRepository;
+import com.maurigvs.bank.transactionapi.service.TransactionService;
 import org.springframework.stereotype.Service;
 
 @Service
