@@ -17,7 +17,7 @@ public class Customer {
     private String taxId;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Transaction> transactionList = new ArrayList<>();
+    private final List<Account> accountList = new ArrayList<>();
 
     public Customer(Long id, String taxId) {
         this.id = id;
@@ -32,7 +32,7 @@ public class Customer {
         return taxId;
     }
 
-    public List<Transaction> getTransactionList() {
-        return transactionList;
+    public List<Account> getAccountList() {
+        return accountList;
     }
 }

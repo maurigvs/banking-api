@@ -34,7 +34,7 @@ public class TransactionController {
     public void postTransaction(@RequestBody @Valid TransactionRequest request){
         var customer = customerService.findByTaxId(request.customerCpf());
         var account = accountService.findById(request.accountNumber());
-        var transaction = new TransactionMapper(customer, account).apply(request);
+        var transaction = new TransactionMapper(account).apply(request);
         transactionService.create(transaction);
     }
 }

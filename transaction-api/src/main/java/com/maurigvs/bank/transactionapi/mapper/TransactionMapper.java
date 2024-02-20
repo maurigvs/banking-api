@@ -9,19 +9,16 @@ import java.time.ZonedDateTime;
 import java.util.function.Function;
 
 public class TransactionMapper implements Function<TransactionRequest, Transaction> {
-
-    private final Customer customer;
+    ;
     private final Account account;
 
-    public TransactionMapper(Customer customer, Account account) {
-        this.customer = customer;
+    public TransactionMapper(Account account) {
         this.account = account;
     }
 
     @Override
     public Transaction apply(TransactionRequest request) {
         return new Transaction(null,
-                customer,
                 account,
                 request.operation(),
                 request.description(),
