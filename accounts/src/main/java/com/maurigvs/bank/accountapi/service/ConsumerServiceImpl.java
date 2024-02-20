@@ -5,7 +5,7 @@ import com.maurigvs.bank.accountapi.repository.ConsumerRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConsumerServiceImpl implements ConsumerService {
+class ConsumerServiceImpl implements ConsumerService {
 
     private final ConsumerRepository repository;
 

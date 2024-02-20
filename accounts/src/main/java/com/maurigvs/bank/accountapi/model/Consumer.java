@@ -1,36 +1,27 @@
 package com.maurigvs.bank.accountapi.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+
+import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
-public class Consumer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@PrimaryKeyJoinColumn(name = "account_id")
+public class Consumer extends Account implements Serializable {
 
     private String customerCpf;
 
-    private Integer pinCode;
-
-    public Consumer(Long id, String customerCpf, Integer pinCode) {
-        this.id = id;
+    public Consumer(Long id, String customerCpf, Double balance, Integer pinCode, LocalDate createdAt) {
+        super(id, balance, pinCode, createdAt);
         this.customerCpf = customerCpf;
-        this.pinCode = pinCode;
     }
 
-    public Long getId() {
-        return id;
+    protected Consumer() {
+        super();
     }
 
     public String getCustomerCpf() {
         return customerCpf;
-    }
-
-    public Integer getPinCode() {
-        return pinCode;
     }
 }

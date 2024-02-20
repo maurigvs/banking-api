@@ -1,7 +1,7 @@
 package com.maurigvs.bank.accountapi.service;
 
-import com.maurigvs.bank.accountapi.model.Consumer;
-import com.maurigvs.bank.accountapi.repository.ConsumerRepository;
+import com.maurigvs.bank.accountapi.model.Commercial;
+import com.maurigvs.bank.accountapi.repository.CommercialRepository;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -15,27 +15,27 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-@SpringBootTest(classes = {ConsumerServiceImpl.class})
+@SpringBootTest(classes = {CommercialServiceImpl.class})
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class ConsumerServiceImplTest {
+class CommercialServiceImplTest {
 
     @Autowired
-    private ConsumerService service;
+    private CommercialService service;
 
     @MockBean
-    private ConsumerRepository repository;
+    private CommercialRepository repository;
 
     @Test
-    void should_create_consumer_account() {
-        var consumerAccount = new Consumer(null,
-                "63592564528",
+    void should_create_commercial_account() {
+        var commercialAccount = new Commercial(null,
+                "29382687000159",
                 0.0,
                 123456,
                 LocalDate.now());
 
-        service.create(consumerAccount);
+        service.create(commercialAccount);
 
-        verify(repository, times(1)).save(consumerAccount);
+        verify(repository, times(1)).save(commercialAccount);
         verifyNoMoreInteractions(repository);
     }
 }

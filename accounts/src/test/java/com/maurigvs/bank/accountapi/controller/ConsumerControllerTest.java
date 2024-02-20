@@ -1,6 +1,6 @@
 package com.maurigvs.bank.accountapi.controller;
 
-import com.maurigvs.bank.accountapi.controller.util.Utils;
+import com.maurigvs.bank.accountapi.util.Utils;
 import com.maurigvs.bank.accountapi.dto.ConsumerRequest;
 import com.maurigvs.bank.accountapi.dto.ErrorResponse;
 import com.maurigvs.bank.accountapi.model.Consumer;
@@ -52,7 +52,7 @@ class ConsumerControllerTest {
 
     @Test
     void should_return_Bad_Request_when_MethodArgumentNotValidException_is_thrown() throws Exception {
-        var consumerRequest = new ConsumerRequest("", 123456);
+        var consumerRequest = new ConsumerRequest("6359256452", 123456);
         var errorResponse = new ErrorResponse("Bad Request",
                 "customerCpf size must be between 11 and 11");
         var jsonRequest = Utils.ofJson(consumerRequest);

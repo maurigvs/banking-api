@@ -1,4 +1,4 @@
-package com.maurigvs.bank.accountapi.controller.util;
+package com.maurigvs.bank.accountapi.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
