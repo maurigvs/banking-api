@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.4'
 }
 
-group = 'br.com.maurigvs'
+group = 'com.maurigvs.bank'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -19,14 +19,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // gRPC
-    implementation 'org.springframework.cloud:spring-cloud-starter-grpc:2.2.4.RELEASE'
-    implementation 'io.grpc:grpc-netty-shaded:1.61.1'
-    implementation 'io.grpc:grpc-protobuf:1.61.1'
-    implementation 'io.grpc:grpc-stub:1.61.1'
-    implementation 'com.google.protobuf:protobuf-java:4.26.0-RC2'
-
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
