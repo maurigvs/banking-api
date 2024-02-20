@@ -5,7 +5,7 @@ import br.com.maurigvs.customerapi.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CompanyServiceImpl implements CompanyService {
+class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository repository;
 

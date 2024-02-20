@@ -5,7 +5,7 @@ import com.maurigvs.bank.transactionapi.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TransactionServiceImpl implements TransactionService {
+class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
 

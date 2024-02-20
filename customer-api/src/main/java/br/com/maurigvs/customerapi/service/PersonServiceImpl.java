@@ -5,7 +5,7 @@ import br.com.maurigvs.customerapi.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PersonServiceImpl implements PersonService {
+class PersonServiceImpl implements PersonService {
 
     private final PersonRepository repository;
 
