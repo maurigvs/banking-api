@@ -20,6 +20,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long customerId;
     private Double balance;
     private LocalDate openDate;
 }

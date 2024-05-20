@@ -8,9 +8,9 @@ import java.time.LocalDate;
 
 public final class AccountMapper {
 
-    public static Account toEntity(AccountRequest request){
-        return new Account(
-                null,
+    public static Account toEntity(AccountRequest request, Long customerId){
+        return  new Account(null,
+                customerId,
                 request.balance(),
                 LocalDate.now());
     }

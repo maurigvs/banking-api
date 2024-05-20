@@ -3,3 +3,8 @@ spring:
     name: account-api
 server:
   port: 8081
+grpc:
+  clients:
+    customer:
+      host: localhost
+      port: 8182

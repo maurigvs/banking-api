@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package customer;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "br.maurigvs.banking.customer.grpc";
+
+message CustomerRequest {
+  string taxId = 1;
+  string name = 2;
+  string surname = 3;
+  google.protobuf.Timestamp birth_date = 4;
+  string email_address = 5;
+  string phone_number = 6;
+}
+
+message CustomerReply {
+  int64 id = 1;
+  string taxId = 2;
+  string full_name = 3;
+  google.protobuf.Timestamp birth_date = 4;
+  string email_address = 5;
+  string phone_number = 6;
+  google.protobuf.Timestamp join_date = 7;
+}
+
+service CustomerService {
+  rpc Create(CustomerRequest) returns (CustomerReply);
+  rpc FindById(google.protobuf.Int64Value) returns (CustomerReply);
+}

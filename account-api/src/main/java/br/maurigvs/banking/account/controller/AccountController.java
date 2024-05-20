@@ -1,8 +1,10 @@
 package br.maurigvs.banking.account.controller;
 
+import br.maurigvs.banking.account.grpc.CustomerGrpcClient;
 import br.maurigvs.banking.account.model.dto.AccountRequest;
 import br.maurigvs.banking.account.model.dto.AccountResponse;
 import br.maurigvs.banking.account.model.mapper.AccountMapper;
+import br.maurigvs.banking.account.model.mapper.CustomerMapper;
 import br.maurigvs.banking.account.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +24,23 @@ import reactor.core.publisher.Mono;
 public class AccountController {
 
     private final AccountService accountService;
+    private final CustomerGrpcClient customerGrpcClient;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<AccountResponse> postAccount(@RequestBody @Valid AccountRequest request){
-        return accountService.create(AccountMapper.toEntity(request))
+
+        return Mono.just(CustomerMapper.toRequest(request.customerInfo()))
+                .flatMap(customerGrpcClient::create)
+                .map(customerId -> AccountMapper.toEntity(request, customerId))
+                .flatMap(accountService::create)
                 .map(AccountMapper::toResponse);
     }
 
     @GetMapping
     public Flux<AccountResponse> getAccountList(){
-        return accountService.findAll().map(AccountMapper::toResponse);
+
+        return accountService.findAll()
+                .map(AccountMapper::toResponse);
     }
 }
