@@ -3,3 +3,6 @@ spring:
     name: customer-api
 server:
   port: 8082
+grpc:
+  server:
+    port: 8182

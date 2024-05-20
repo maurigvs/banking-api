@@ -8,5 +8,7 @@ public interface CustomerService {
 
     Mono<Customer> create(Customer customer);
 
+    Mono<Customer> findById(Long id);
+
     Flux<Customer> findAll();
 }
