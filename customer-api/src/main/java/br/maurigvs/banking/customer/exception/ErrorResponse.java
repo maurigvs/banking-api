@@ -1,4 +1,4 @@
-package br.maurigvs.banking.customer.model.dto;
+package br.maurigvs.banking.customer.exception;
 
 public record ErrorResponse(
         String error,

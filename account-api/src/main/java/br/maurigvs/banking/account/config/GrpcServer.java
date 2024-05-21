@@ -1,4 +1,4 @@
-package br.maurigvs.banking.transaction.config;
+package br.maurigvs.banking.account.config;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -16,7 +16,7 @@ public class GrpcServer {
     public Server serverBuilder() {
         return ServerBuilder.forPort(port)
                 .directExecutor()
-                //.addService(transactionGrpcService)
+                //.addService(accountGrpcService)
                 .build();
     }
 }

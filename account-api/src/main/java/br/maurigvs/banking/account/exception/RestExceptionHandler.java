@@ -1,6 +1,5 @@
 package br.maurigvs.banking.account.exception;
 
-import br.maurigvs.banking.account.model.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

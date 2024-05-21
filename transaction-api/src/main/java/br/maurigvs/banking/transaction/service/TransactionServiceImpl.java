@@ -1,6 +1,6 @@
 package br.maurigvs.banking.transaction.service;
 
-import br.maurigvs.banking.transaction.model.entity.Transaction;
+import br.maurigvs.banking.transaction.model.Transaction;
 import br.maurigvs.banking.transaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,12 +17,6 @@ class TransactionServiceImpl implements TransactionService {
     @Override
     public Mono<Transaction> create(Transaction transaction) {
         return Mono.fromSupplier(() -> transactionRepository.save(transaction))
-                .subscribeOn(Schedulers.boundedElastic());
-    }
-
-    @Override
-    public Flux<Transaction> findByAccountId(Long accountId) {
-        return Flux.fromStream(transactionRepository.findByAccountId(accountId).stream())
                 .subscribeOn(Schedulers.boundedElastic());
     }
 

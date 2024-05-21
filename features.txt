@@ -1,0 +1,40 @@
+banking-api
+
+--------- feature 1: open account
+
+account-api
+	POST /account/open
+
+customer-api
+	rpc Create(CustomerRequest) returns (CustomerReply);
+
+--------- feature 2: make a transaction
+
+transaction-api
+	POST /account/{id}/credit
+	POST /account/{id}/debit
+	POST /account/{id}/transfer
+
+account-api
+	rpc Update(UpdateRequest) returns (UpdateReply);
+
+--------- feature 3: get account statement
+
+account-api
+	GET  /account/{id}/statement
+
+customer-api
+	rpc FindById(google.protobuf.Int64Value) returns (CustomerReply);
+
+transaction-api
+	rpc FindByAccountId(google.protobuf.Int64Value) returns (stream TransactionReply);
+
+
+--------- feature 4: get customer position
+
+customer-api
+	GET /customer/all
+
+account-api
+	rpc FindByCustomerId(google.protobuf.Int64Value) returns (stream AccountReply);
+

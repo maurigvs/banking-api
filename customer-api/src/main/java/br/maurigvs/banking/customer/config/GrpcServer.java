@@ -1,6 +1,5 @@
 package br.maurigvs.banking.customer.config;
 
-import br.maurigvs.banking.customer.grpc.CustomerGrpcService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +13,10 @@ public class GrpcServer {
     private Integer port;
 
     @Bean
-    public Server serverBuilder(CustomerGrpcService customerGrpcService) {
+    public Server serverBuilder() {
         return ServerBuilder.forPort(port)
                 .directExecutor()
-                .addService(customerGrpcService)
+                //.addService(customerGrpcService)
                 .build();
     }
 }

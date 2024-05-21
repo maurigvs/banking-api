@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package account;
+
+option java_multiple_files = true;
+option java_package = "br.maurigvs.banking.account.grpc";
+
+message UpdateRequest {
+  int64 id = 1;
+  double amount = 2;
+}
+
+message UpdateReply {
+  int64 id = 1;
+  double balance = 2;
+}
+
+service AccountService {
+  rpc Update(UpdateRequest) returns (UpdateReply);
+}

@@ -1,4 +1,4 @@
-package br.maurigvs.banking.account.model.entity;
+package br.maurigvs.banking.transaction.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,24 +8,20 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class Account {
+public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private Long customerId;
-
-    @Setter
-    private Double balance;
-
-    private LocalDate openDate;
+    private Long accountId;
+    private String description;
+    private Double amount;
+    private Instant timestamp;
 }

@@ -1,6 +1,6 @@
 package br.maurigvs.banking.customer.repository;
 
-import br.maurigvs.banking.customer.model.entity.Customer;
+import br.maurigvs.banking.customer.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
