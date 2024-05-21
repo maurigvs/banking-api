@@ -11,7 +11,7 @@ public final class AccountMapper {
     public static Account toEntity(AccountRequest request, Long customerId){
         return  new Account(null,
                 customerId,
-                request.balance(),
+                0.0,
                 LocalDate.now());
     }
 

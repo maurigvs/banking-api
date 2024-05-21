@@ -17,7 +17,6 @@ public class CustomerGrpcClient {
     private final CustomerServiceGrpc.CustomerServiceBlockingStub customerServiceBlockingStub;
 
     public Mono<Long> create(CustomerRequest request){
-
         return Mono.fromSupplier(() -> customerServiceBlockingStub.create(request))
                 .map(CustomerReply::getId)
                 .doOnError(throwable -> log.warn("Error from customer-api: {}", throwable.getMessage()))

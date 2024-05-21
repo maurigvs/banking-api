@@ -10,6 +10,6 @@ public record AccountRequest(
         CustomerRequest customerInfo,
 
         @NotNull
-        Double balance
+        Double initialDeposit
 ) {
 }

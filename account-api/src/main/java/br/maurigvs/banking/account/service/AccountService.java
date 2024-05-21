@@ -8,5 +8,9 @@ public interface AccountService {
 
     Mono<Account> create(Account account);
 
+    Mono<Account> findById(Long id);
+
     Flux<Account> findAll();
+
+    Mono<Account> updateBalance(Long id, Double amount);
 }
