@@ -18,7 +18,6 @@ public class CustomerController {
 
     @GetMapping
     public Flux<CustomerResponse> getCustomerList(){
-        return customerService.findAll()
-                .map(CustomerMapper::toResponse);
+        return customerService.findAll().map(CustomerMapper::toResponse);
     }
 }
