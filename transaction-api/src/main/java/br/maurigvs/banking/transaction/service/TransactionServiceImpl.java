@@ -21,6 +21,12 @@ class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public Flux<Transaction> findByAccountId(Long accountId) {
+        return Flux.fromStream(transactionRepository.findByAccountId(accountId).stream())
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
     public Flux<Transaction> findAll() {
         return Flux.fromStream(transactionRepository.findAll().stream())
                 .subscribeOn(Schedulers.boundedElastic());

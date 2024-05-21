@@ -8,5 +8,7 @@ public interface TransactionService {
 
     Mono<Transaction> create(Transaction transaction);
 
+    Flux<Transaction> findByAccountId(Long accountId);
+
     Flux<Transaction> findAll();
 }
