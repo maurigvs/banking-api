@@ -2,10 +2,7 @@ package br.maurigvs.banking.account.controller;
 
 import br.maurigvs.banking.account.dto.AccountRequest;
 import br.maurigvs.banking.account.dto.AccountResponse;
-import br.maurigvs.banking.account.grpc.CustomerGrpcClient;
-import br.maurigvs.banking.account.mapper.AccountMapper;
-import br.maurigvs.banking.account.mapper.CustomerMapper;
-import br.maurigvs.banking.account.service.AccountService;
+import br.maurigvs.banking.account.service.AggregatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,15 +17,11 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final AccountService accountService;
-    private final CustomerGrpcClient customerService;
+    private final AggregatorService service;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<AccountResponse> postAccount(@RequestBody AccountRequest request){
-        return customerService.create(CustomerMapper.toRequest(request.customerInfo()))
-                .map(customerId -> AccountMapper.toEntity(request, customerId))
-                .flatMap(accountService::create)
-                .map(AccountMapper::toResponse);
+        return service.openAccount(request);
     }
 }

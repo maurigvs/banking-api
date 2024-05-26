@@ -19,7 +19,8 @@ public class CustomerGrpcClient {
     public Mono<Long> create(CustomerRequest request){
         return Mono.fromSupplier(() -> customerServiceBlockingStub.create(request))
                 .map(CustomerReply::getId)
-                .doOnError(t -> log.warn("Error creating customer: {}", t.getMessage()))
+                .doOnNext(r -> log.info("Customer created with id: {}", r))
+                .doOnError(t -> log.warn("Error creating Customer: {}", t.getMessage()))
                 .onErrorMap(GrpcExceptionHandler::toClientException);
     }
 }
