@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import reactor.core.publisher.Mono;
 
+import java.time.format.DateTimeParseException;
+
+import static br.maurigvs.banking.account.mapper.DateTimeMapper.DATE_FORMAT;
+
 @ControllerAdvice
 public class RestExceptionHandler {
 
@@ -27,6 +31,13 @@ public class RestExceptionHandler {
     @ResponseBody
     public Mono<ErrorResponse> handleBusinessException(TechnicalException exception) {
         return Mono.just(new ErrorResponse(TECHNICAL_ERROR, exception.getMessage()));
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Mono<ErrorResponse> handleDateTimeParseException() {
+        return Mono.just(new ErrorResponse(INVALID_ARGUMENT_ERROR, "date must be in the format: " + DATE_FORMAT));
     }
 
     @ExceptionHandler(WebExchangeBindException.class)

@@ -3,6 +3,7 @@ package br.maurigvs.banking.account.controller;
 import br.maurigvs.banking.account.dto.AccountRequest;
 import br.maurigvs.banking.account.dto.AccountResponse;
 import br.maurigvs.banking.account.service.AggregatorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class AccountController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<AccountResponse> postAccount(@RequestBody AccountRequest request){
+    public Mono<AccountResponse> postAccount(@RequestBody @Valid AccountRequest request){
         return service.openAccount(request);
     }
 }

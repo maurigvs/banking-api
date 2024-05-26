@@ -5,11 +5,14 @@ import com.google.protobuf.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public final class DateTimeMapper {
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd";
+
     public static LocalDate toLocalDate(String date){
-        return LocalDate.parse(date);
+        return LocalDate.parse(date, DateTimeFormatter.ofPattern(DATE_FORMAT));
     }
 
     public static LocalDate toLocalDate(Timestamp timestamp){

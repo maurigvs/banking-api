@@ -13,8 +13,8 @@ public final class CustomerMapper {
                 .setName(request.name())
                 .setSurname(request.surname())
                 .setBirthDate(toTimestamp(request.birthDate()))
-                .setEmailAddress(request.emailAddress())
-                .setPhoneNumber(request.phoneNumber())
+                .setEmailAddress(request.email())
+                .setPhoneNumber(request.phone())
                 .build();
     }
 }
