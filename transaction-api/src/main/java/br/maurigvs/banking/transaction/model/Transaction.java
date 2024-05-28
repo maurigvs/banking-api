@@ -23,5 +23,6 @@ public class Transaction {
     private Long accountId;
     private String description;
     private Double amount;
+    private Double balance;
     private Instant timestamp;
 }

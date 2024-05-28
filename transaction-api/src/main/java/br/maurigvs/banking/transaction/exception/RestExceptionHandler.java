@@ -12,6 +12,7 @@ import reactor.core.publisher.Mono;
 public class RestExceptionHandler {
 
     private static final String BUSINESS_ERROR = HttpStatus.PRECONDITION_FAILED.getReasonPhrase();
+    private static final String TECHNICAL_ERROR = HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
     private static final String INVALID_ARGUMENT_ERROR = HttpStatus.BAD_REQUEST.getReasonPhrase();
 
     @ExceptionHandler(BusinessException.class)
@@ -19,6 +20,13 @@ public class RestExceptionHandler {
     @ResponseBody
     public Mono<ErrorResponse> handleBusinessException(BusinessException exception) {
         return Mono.just(new ErrorResponse(BUSINESS_ERROR, exception.getMessage()));
+    }
+
+    @ExceptionHandler(TechnicalException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Mono<ErrorResponse> handleBusinessException(TechnicalException exception) {
+        return Mono.just(new ErrorResponse(TECHNICAL_ERROR, exception.getMessage()));
     }
 
     @ExceptionHandler(WebExchangeBindException.class)

@@ -8,6 +8,7 @@ import java.util.List;
 public final class GrpcExceptionHandler {
 
     private static final List<Status.Code> businessStatus = List.of(
+            Status.ALREADY_EXISTS.getCode(),
             Status.FAILED_PRECONDITION.getCode());
 
     public static StatusRuntimeException toServerException(Throwable throwable) {
@@ -24,7 +25,6 @@ public final class GrpcExceptionHandler {
         if (throwable instanceof StatusRuntimeException exception) {
             if(businessStatus.contains(exception.getStatus().getCode()))
                 return new BusinessException(exception.getStatus().getDescription());
-
             return new TechnicalException(exception);
         }
         return new RuntimeException(throwable.getMessage());
