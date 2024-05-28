@@ -12,6 +12,11 @@ public final class GrpcExceptionHandler {
             Status.FAILED_PRECONDITION.getCode());
 
     public static StatusRuntimeException toServerException(Throwable throwable) {
+        if (throwable instanceof NotFoundException)
+            return Status.NOT_FOUND
+                    .withDescription(throwable.getMessage())
+                    .asRuntimeException();
+
         if (throwable instanceof BusinessException)
             return Status.FAILED_PRECONDITION
                     .withDescription(throwable.getMessage())

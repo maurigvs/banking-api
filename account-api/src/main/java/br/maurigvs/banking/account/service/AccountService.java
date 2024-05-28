@@ -6,4 +6,6 @@ import reactor.core.publisher.Mono;
 public interface AccountService {
 
     Mono<Account> create(Account account);
+
+    Mono<Account> updateBalance(Long id, Double amount);
 }

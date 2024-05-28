@@ -1,6 +1,6 @@
-package br.maurigvs.banking.account.config;
+package br.maurigvs.banking.transaction.config;
 
-import br.maurigvs.banking.customer.grpc.CustomerServiceGrpc;
+import br.maurigvs.banking.account.grpc.AccountServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 public class GrpcClient {
 
     @Bean
-    public ManagedChannel managedChannel(@Value("${grpc.clients.customer.host}") String host,
-                                         @Value("${grpc.clients.customer.port}") Integer port) {
+    public ManagedChannel managedChannel(@Value("${grpc.clients.account.host}") String host,
+                                         @Value("${grpc.clients.account.port}") Integer port) {
         return ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext()
@@ -22,7 +22,7 @@ public class GrpcClient {
     }
 
     @Bean
-    public CustomerServiceGrpc.CustomerServiceBlockingStub customerServiceBlockingStub(ManagedChannel managedChannel) {
-        return CustomerServiceGrpc.newBlockingStub(managedChannel);
+    public AccountServiceGrpc.AccountServiceBlockingStub accountServiceBlockingStub(ManagedChannel managedChannel){
+        return AccountServiceGrpc.newBlockingStub(managedChannel);
     }
 }

@@ -2,6 +2,7 @@ package br.maurigvs.banking.account.mapper;
 
 import br.maurigvs.banking.account.dto.AccountRequest;
 import br.maurigvs.banking.account.dto.AccountResponse;
+import br.maurigvs.banking.account.grpc.UpdateReply;
 import br.maurigvs.banking.account.model.Account;
 
 import java.time.LocalDate;
@@ -21,5 +22,12 @@ public final class AccountMapper {
                 account.getId(),
                 account.getCustomerId(),
                 account.getOpenDate().toString());
+    }
+
+    public static UpdateReply toUpdateReply(Account account) {
+        return UpdateReply.newBuilder()
+                .setId(account.getId())
+                .setBalance(account.getBalance())
+                .build();
     }
 }
