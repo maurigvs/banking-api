@@ -1,6 +1,7 @@
 package br.maurigvs.banking.account.service;
 
 import br.maurigvs.banking.account.exception.BusinessException;
+import br.maurigvs.banking.account.exception.InsufficientBalanceException;
 import br.maurigvs.banking.account.model.Account;
 import br.maurigvs.banking.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import reactor.util.function.Tuple2;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -21,7 +24,6 @@ class AccountServiceImpl implements AccountService {
     @Override
     public Mono<Account> create(Account account) {
         return Mono.fromSupplier(() -> repository.save(account))
-                .doOnNext(r -> log.info("Account created with id: {}", r.getId()))
                 .doOnError(t -> log.warn("Error creating Account: {}", t.getMessage()))
                 .subscribeOn(Schedulers.boundedElastic());
     }
@@ -35,12 +37,30 @@ class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Mono<Account> updateBalance(Long id, Double amount) {
+    public Mono<Account> processAmount(Long id, Double amount) {
         return findById(id)
                 .filter(account -> (account.getBalance() + amount) > 0)
-                .switchIfEmpty(Mono.error(new BusinessException("Account balance is insufficient")))
+                .switchIfEmpty(Mono.error(new InsufficientBalanceException()))
                 .map(account -> { account.setBalance(account.getBalance() + amount); return account; })
                 .map(repository::save)
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<Tuple2<Account, Account>> transferAmount(Long senderId, Long recipientId, Double amount) {
+        return findById(senderId).zipWith(findById(recipientId))
+                .filter(pair -> !pair.getT1().getId().equals(pair.getT2().getId()))
+                .switchIfEmpty(Mono.error(new BusinessException("Sender and recipient can not be the same Account")))
+                .filter(pair -> (pair.getT1().getBalance() - amount) > 0)
+                .switchIfEmpty(Mono.error(new InsufficientBalanceException()))
+                .map(pair -> {
+                    var sender = pair.getT1();
+                    sender.setBalance(sender.getBalance() - amount);
+                    var recipient = pair.getT2();
+                    recipient.setBalance(recipient.getBalance() + amount);
+                    repository.saveAll(List.of(sender, recipient));
+                    return pair;
+                })
                 .subscribeOn(Schedulers.boundedElastic());
     }
 }

@@ -2,8 +2,10 @@ package br.maurigvs.banking.account.mapper;
 
 import br.maurigvs.banking.account.dto.AccountRequest;
 import br.maurigvs.banking.account.dto.AccountResponse;
+import br.maurigvs.banking.account.grpc.TransferReply;
 import br.maurigvs.banking.account.grpc.UpdateReply;
 import br.maurigvs.banking.account.model.Account;
+import reactor.util.function.Tuple2;
 
 import java.time.LocalDate;
 
@@ -28,6 +30,13 @@ public final class AccountMapper {
         return UpdateReply.newBuilder()
                 .setId(account.getId())
                 .setBalance(account.getBalance())
+                .build();
+    }
+
+    public static TransferReply toTransferResponse(Tuple2<Account, Account> accountPair){
+        return TransferReply.newBuilder()
+                .setSender(toUpdateReply(accountPair.getT1()))
+                .setRecipient(toUpdateReply(accountPair.getT2()))
                 .build();
     }
 }

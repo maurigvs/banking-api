@@ -16,12 +16,21 @@ public class AccountGrpcService extends AccountServiceGrpc.AccountServiceImplBas
     private final AccountService service;
 
     @Override
-    public void updateBalance(UpdateRequest request, StreamObserver<UpdateReply> response) {
+    public void processAmount(UpdateRequest request, StreamObserver<UpdateReply> response) {
 
-        service.updateBalance(request.getId(), request.getAmount())
+        service.processAmount(request.getId(), request.getAmount())
                 .map(AccountMapper::toUpdateReply)
-                .doOnNext(r -> log.info("Account balance updated by Id {}", r.getId()))
-                .doOnError(t -> log.warn("Error when updating Account balance: {}", t.getMessage()))
+                .doOnError(t -> log.warn("Error when processing amount: {}", t.getMessage()))
+                .onErrorMap(GrpcExceptionHandler::toServerException)
+                .subscribe(response::onNext, response::onError, response::onCompleted);
+    }
+
+    @Override
+    public void transferAmount(TransferRequest request, StreamObserver<TransferReply> response) {
+
+        service.transferAmount(request.getId(), request.getRecipient().getId(), request.getRecipient().getAmount())
+                .map(AccountMapper::toTransferResponse)
+                .doOnError(t -> log.warn("Error when transferring amount: {}", t.getMessage()))
                 .onErrorMap(GrpcExceptionHandler::toServerException)
                 .subscribe(response::onNext, response::onError, response::onCompleted);
     }
