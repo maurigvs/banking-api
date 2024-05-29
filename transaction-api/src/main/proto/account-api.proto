@@ -17,6 +17,17 @@ message UpdateReply {
   double balance = 2;
 }
 
+message TransferRequest {
+  int64 id = 1;
+  UpdateRequest recipient = 2;
+}
+
+message TransferReply {
+  UpdateReply sender = 1;
+  UpdateReply recipient = 2;
+}
+
 service AccountService {
-  rpc UpdateBalance(UpdateRequest) returns (UpdateReply);
+  rpc ProcessAmount(UpdateRequest) returns (UpdateReply);
+  rpc TransferAmount(TransferRequest) returns (TransferReply);
 }
