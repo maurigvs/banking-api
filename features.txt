@@ -1,6 +1,6 @@
 banking-api
 
---------- feature 1: open account
+--------- feature 1: open account --- DONE!!!
 
 account-api
 	POST /account/open
@@ -8,17 +8,20 @@ account-api
 customer-api
 	rpc Create(CustomerRequest) returns (CustomerReply);
 
---------- feature 2: make a transaction
+--------- feature 2: make a transaction --- DONE!!!
 
 transaction-api
-	POST /account/{id}/credit
-	POST /account/{id}/debit
-	POST /account/{id}/transfer
+	POST /account/{id}/transaction
+	POST /account/{id}/transfer/{id}/{amount}
 
 account-api
-	rpc Update(UpdateRequest) returns (UpdateReply);
+	rpc ProcessAmount(UpdateRequest) returns (UpdateReply);
+	rpc TransferAmount(TransferRequest) returns (TransferReply);
 
 --------- feature 3: get account statement
+bugs:
+    account-api: include balance in account response
+    customer-api: log customer id in customer grpc service
 
 account-api
 	GET  /account/{id}/statement
