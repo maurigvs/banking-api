@@ -5,11 +5,9 @@ import br.maurigvs.banking.customer.grpc.CustomerReply;
 import br.maurigvs.banking.customer.grpc.CustomerRequest;
 import br.maurigvs.banking.customer.grpc.CustomerServiceGrpc;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomerGrpcClient {
@@ -19,7 +17,6 @@ public class CustomerGrpcClient {
     public Mono<Long> create(CustomerRequest request){
         return Mono.fromSupplier(() -> customerServiceBlockingStub.create(request))
                 .map(CustomerReply::getId)
-                .doOnError(t -> log.warn("Error creating Customer: {}", t.getMessage()))
                 .onErrorMap(GrpcExceptionHandler::toClientException);
     }
 }

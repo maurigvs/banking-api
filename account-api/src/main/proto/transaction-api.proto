@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package transaction;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "br.maurigvs.banking.transaction.grpc";
+
+message TransactionReply {
+  int64 id = 1;
+  string description = 2;
+  double amount = 3;
+  double balance = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+service TransactionService {
+  rpc FindByAccount(google.protobuf.Int64Value) returns (stream TransactionReply);
+}

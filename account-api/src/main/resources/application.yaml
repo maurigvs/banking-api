@@ -10,3 +10,6 @@ grpc:
     customer:
       host: localhost
       port: 8182
+    transaction:
+      host: localhost
+      port: 8183
